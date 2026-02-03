@@ -1,0 +1,45 @@
+@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Inter:wght@400;500;600;700;800&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-kitchen-cream text-kitchen-navy antialiased;
+    margin: 0;
+    min-width: 320px;
+    min-height: 100vh;
+  }
+
+  * {
+    @apply border-kitchen-navy;
+  }
+}
+
+@layer utilities {
+  .pixel-perfect {
+    image-rendering: -moz-crisp-edges;
+    image-rendering: -webkit-crisp-edges;
+    image-rendering: pixelated;
+    image-rendering: crisp-edges;
+  }
+
+  .text-shadow-pixel {
+    text-shadow: 2px 2px 0px rgba(0, 0, 0, 0.3);
+  }
+}
+
+@layer components {
+  .btn-primary {
+    @apply bg-kitchen-blue hover:bg-kitchen-navy text-white font-semibold py-3 px-6 rounded-lg transition-colors duration-200 shadow-lg;
+  }
+
+  .btn-secondary {
+    @apply bg-kitchen-teal hover:bg-kitchen-blue text-kitchen-navy hover:text-white font-semibold py-3 px-6 rounded-lg transition-colors duration-200;
+  }
+
+  .card {
+    @apply bg-white rounded-xl shadow-lg p-6 border-2 border-kitchen-navy;
+  }
+}

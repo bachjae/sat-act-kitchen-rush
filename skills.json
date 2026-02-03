@@ -1,0 +1,402 @@
+{
+  "version": "1.0",
+  "totalSkills": 49,
+  "examTypes": {
+    "SAT": 40,
+    "ACT": 9
+  },
+  "skills": [
+    {
+      "id": "sat-rw-info-main-idea",
+      "examType": "SAT",
+      "section": "Reading & Writing",
+      "contentDomain": "Information and Ideas",
+      "subskill": "Central Ideas and Details",
+      "description": "Identify the main idea or theme of a passage"
+    },
+    {
+      "id": "sat-rw-info-inference",
+      "examType": "SAT",
+      "section": "Reading & Writing",
+      "contentDomain": "Information and Ideas",
+      "subskill": "Inferences",
+      "description": "Draw logical conclusions from text"
+    },
+    {
+      "id": "sat-rw-info-evidence",
+      "examType": "SAT",
+      "section": "Reading & Writing",
+      "contentDomain": "Information and Ideas",
+      "subskill": "Command of Evidence",
+      "description": "Identify textual evidence supporting a claim"
+    },
+    {
+      "id": "sat-rw-info-vocab",
+      "examType": "SAT",
+      "section": "Reading & Writing",
+      "contentDomain": "Information and Ideas",
+      "subskill": "Vocabulary",
+      "description": "Understand words in context"
+    },
+    {
+      "id": "sat-rw-info-compare",
+      "examType": "SAT",
+      "section": "Reading & Writing",
+      "contentDomain": "Information and Ideas",
+      "subskill": "Cross-text Connections",
+      "description": "Compare ideas across multiple texts"
+    },
+    {
+      "id": "sat-rw-craft-purpose",
+      "examType": "SAT",
+      "section": "Reading & Writing",
+      "contentDomain": "Craft and Structure",
+      "subskill": "Words in Context",
+      "description": "Determine meaning of words based on usage"
+    },
+    {
+      "id": "sat-rw-craft-structure",
+      "examType": "SAT",
+      "section": "Reading & Writing",
+      "contentDomain": "Craft and Structure",
+      "subskill": "Text Structure and Purpose",
+      "description": "Analyze how text is organized"
+    },
+    {
+      "id": "sat-rw-craft-tone",
+      "examType": "SAT",
+      "section": "Reading & Writing",
+      "contentDomain": "Craft and Structure",
+      "subskill": "Author's Perspective",
+      "description": "Identify tone, mood, and point of view"
+    },
+    {
+      "id": "sat-rw-expression-transitions",
+      "examType": "SAT",
+      "section": "Reading & Writing",
+      "contentDomain": "Expression of Ideas",
+      "subskill": "Transitions",
+      "description": "Choose appropriate transition words"
+    },
+    {
+      "id": "sat-rw-expression-style",
+      "examType": "SAT",
+      "section": "Reading & Writing",
+      "contentDomain": "Expression of Ideas",
+      "subskill": "Rhetorical Synthesis",
+      "description": "Combine ideas effectively"
+    },
+    {
+      "id": "sat-rw-expression-cohesion",
+      "examType": "SAT",
+      "section": "Reading & Writing",
+      "contentDomain": "Expression of Ideas",
+      "subskill": "Logical Sequence",
+      "description": "Order sentences logically"
+    },
+    {
+      "id": "sat-rw-conv-comma",
+      "examType": "SAT",
+      "section": "Reading & Writing",
+      "contentDomain": "Standard English Conventions",
+      "subskill": "Comma Usage",
+      "description": "Apply comma rules correctly"
+    },
+    {
+      "id": "sat-rw-conv-subject-verb",
+      "examType": "SAT",
+      "section": "Reading & Writing",
+      "contentDomain": "Standard English Conventions",
+      "subskill": "Subject-Verb Agreement",
+      "description": "Match subjects with correct verb forms"
+    },
+    {
+      "id": "sat-rw-conv-pronoun",
+      "examType": "SAT",
+      "section": "Reading & Writing",
+      "contentDomain": "Standard English Conventions",
+      "subskill": "Pronoun-Antecedent Agreement",
+      "description": "Use pronouns that match antecedents"
+    },
+    {
+      "id": "sat-rw-conv-modifier",
+      "examType": "SAT",
+      "section": "Reading & Writing",
+      "contentDomain": "Standard English Conventions",
+      "subskill": "Modifiers",
+      "description": "Place modifiers correctly"
+    },
+    {
+      "id": "sat-rw-conv-parallel",
+      "examType": "SAT",
+      "section": "Reading & Writing",
+      "contentDomain": "Standard English Conventions",
+      "subskill": "Parallel Structure",
+      "description": "Maintain consistent grammatical form"
+    },
+    {
+      "id": "sat-rw-conv-word-choice",
+      "examType": "SAT",
+      "section": "Reading & Writing",
+      "contentDomain": "Standard English Conventions",
+      "subskill": "Grammar",
+      "description": "Choose correct word forms"
+    },
+    {
+      "id": "sat-math-algebra-linear",
+      "examType": "SAT",
+      "section": "Math",
+      "contentDomain": "Algebra",
+      "subskill": "Linear Equations in One Variable",
+      "description": "Solve one-variable linear equations"
+    },
+    {
+      "id": "sat-math-algebra-systems",
+      "examType": "SAT",
+      "section": "Math",
+      "contentDomain": "Algebra",
+      "subskill": "Systems of Linear Equations",
+      "description": "Solve systems of equations"
+    },
+    {
+      "id": "sat-math-algebra-inequality",
+      "examType": "SAT",
+      "section": "Math",
+      "contentDomain": "Algebra",
+      "subskill": "Linear Inequalities",
+      "description": "Solve and graph inequalities"
+    },
+    {
+      "id": "sat-math-algebra-quadratic",
+      "examType": "SAT",
+      "section": "Math",
+      "contentDomain": "Algebra",
+      "subskill": "Quadratic Functions",
+      "description": "Work with quadratic equations"
+    },
+    {
+      "id": "sat-math-algebra-absolute",
+      "examType": "SAT",
+      "section": "Math",
+      "contentDomain": "Algebra",
+      "subskill": "Absolute Value",
+      "description": "Solve absolute value equations"
+    },
+    {
+      "id": "sat-math-algebra-word-problem",
+      "examType": "SAT",
+      "section": "Math",
+      "contentDomain": "Algebra",
+      "subskill": "Word Problems",
+      "description": "Translate word problems into equations"
+    },
+    {
+      "id": "sat-math-algebra-basic",
+      "examType": "SAT",
+      "section": "Math",
+      "contentDomain": "Algebra",
+      "subskill": "Basic Operations",
+      "description": "Perform basic algebraic operations"
+    },
+    {
+      "id": "sat-math-advanced-nonlinear",
+      "examType": "SAT",
+      "section": "Math",
+      "contentDomain": "Advanced Math",
+      "subskill": "Equivalent Expressions",
+      "description": "Simplify and manipulate expressions"
+    },
+    {
+      "id": "sat-math-advanced-functions",
+      "examType": "SAT",
+      "section": "Math",
+      "contentDomain": "Advanced Math",
+      "subskill": "Nonlinear Functions",
+      "description": "Evaluate and analyze functions"
+    },
+    {
+      "id": "sat-math-advanced-exponential",
+      "examType": "SAT",
+      "section": "Math",
+      "contentDomain": "Advanced Math",
+      "subskill": "Exponential Functions",
+      "description": "Work with exponential growth/decay"
+    },
+    {
+      "id": "sat-math-advanced-rational",
+      "examType": "SAT",
+      "section": "Math",
+      "contentDomain": "Advanced Math",
+      "subskill": "Rational Expressions",
+      "description": "Simplify rational expressions"
+    },
+    {
+      "id": "sat-math-data-ratios",
+      "examType": "SAT",
+      "section": "Math",
+      "contentDomain": "Problem Solving and Data Analysis",
+      "subskill": "Ratios, Rates, Proportions",
+      "description": "Solve proportion problems"
+    },
+    {
+      "id": "sat-math-data-percent",
+      "examType": "SAT",
+      "section": "Math",
+      "contentDomain": "Problem Solving and Data Analysis",
+      "subskill": "Percentages",
+      "description": "Calculate percentages"
+    },
+    {
+      "id": "sat-math-data-statistics",
+      "examType": "SAT",
+      "section": "Math",
+      "contentDomain": "Problem Solving and Data Analysis",
+      "subskill": "Center, Spread, Shape",
+      "description": "Calculate mean, median, mode, range"
+    },
+    {
+      "id": "sat-math-data-probability",
+      "examType": "SAT",
+      "section": "Math",
+      "contentDomain": "Problem Solving and Data Analysis",
+      "subskill": "Probability",
+      "description": "Calculate probabilities"
+    },
+    {
+      "id": "sat-math-data-scatterplot",
+      "examType": "SAT",
+      "section": "Math",
+      "contentDomain": "Problem Solving and Data Analysis",
+      "subskill": "Two-variable Data",
+      "description": "Interpret scatterplots and correlations"
+    },
+    {
+      "id": "sat-math-data-interpret",
+      "examType": "SAT",
+      "section": "Math",
+      "contentDomain": "Problem Solving and Data Analysis",
+      "subskill": "Data Interpretation",
+      "description": "Read and interpret data displays"
+    },
+    {
+      "id": "sat-math-data-margin-error",
+      "examType": "SAT",
+      "section": "Math",
+      "contentDomain": "Problem Solving and Data Analysis",
+      "subskill": "Evaluating Statistical Claims",
+      "description": "Understand margin of error and sampling"
+    },
+    {
+      "id": "sat-math-geo-area",
+      "examType": "SAT",
+      "section": "Math",
+      "contentDomain": "Geometry and Trigonometry",
+      "subskill": "Area and Volume",
+      "description": "Calculate area and volume"
+    },
+    {
+      "id": "sat-math-geo-circles",
+      "examType": "SAT",
+      "section": "Math",
+      "contentDomain": "Geometry and Trigonometry",
+      "subskill": "Circles",
+      "description": "Work with circle properties"
+    },
+    {
+      "id": "sat-math-geo-triangles",
+      "examType": "SAT",
+      "section": "Math",
+      "contentDomain": "Geometry and Trigonometry",
+      "subskill": "Right Triangles and Trigonometry",
+      "description": "Use Pythagorean theorem and trig ratios"
+    },
+    {
+      "id": "sat-math-geo-volume",
+      "examType": "SAT",
+      "section": "Math",
+      "contentDomain": "Geometry and Trigonometry",
+      "subskill": "Volume",
+      "description": "Calculate volume of 3D shapes"
+    },
+    {
+      "id": "sat-math-geo-angles",
+      "examType": "SAT",
+      "section": "Math",
+      "contentDomain": "Geometry and Trigonometry",
+      "subskill": "Lines and Angles",
+      "description": "Work with angle relationships"
+    },
+    {
+      "id": "act-english-usage",
+      "examType": "ACT",
+      "section": "English",
+      "contentDomain": "Conventions of Standard English",
+      "subskill": "Sentence Structure",
+      "description": "Identify and fix sentence fragments and run-ons"
+    },
+    {
+      "id": "act-english-punctuation",
+      "examType": "ACT",
+      "section": "English",
+      "contentDomain": "Conventions of Standard English",
+      "subskill": "Punctuation",
+      "description": "Apply punctuation rules"
+    },
+    {
+      "id": "act-english-strategy",
+      "examType": "ACT",
+      "section": "English",
+      "contentDomain": "Knowledge of Language",
+      "subskill": "Precision and Conciseness",
+      "description": "Choose clear and concise wording"
+    },
+    {
+      "id": "act-math-algebra",
+      "examType": "ACT",
+      "section": "Math",
+      "contentDomain": "Algebra",
+      "subskill": "Expressions and Equations",
+      "description": "Manipulate algebraic expressions"
+    },
+    {
+      "id": "act-math-geo",
+      "examType": "ACT",
+      "section": "Math",
+      "contentDomain": "Geometry",
+      "subskill": "Plane Geometry",
+      "description": "Work with 2D shapes"
+    },
+    {
+      "id": "act-math-trig",
+      "examType": "ACT",
+      "section": "Math",
+      "contentDomain": "Geometry",
+      "subskill": "Trigonometry",
+      "description": "Apply trigonometric ratios"
+    },
+    {
+      "id": "act-science-interpretation",
+      "examType": "ACT",
+      "section": "Science",
+      "contentDomain": "Interpretation of Data",
+      "subskill": "Reading Graphs",
+      "description": "Extract information from graphs and tables"
+    },
+    {
+      "id": "act-science-evaluation",
+      "examType": "ACT",
+      "section": "Science",
+      "contentDomain": "Scientific Investigation",
+      "subskill": "Research Design",
+      "description": "Understand experimental design"
+    },
+    {
+      "id": "act-science-hypothesis",
+      "examType": "ACT",
+      "section": "Science",
+      "contentDomain": "Scientific Investigation",
+      "subskill": "Hypothesis Testing",
+      "description": "Evaluate hypotheses and predictions"
+    }
+  ]
+}

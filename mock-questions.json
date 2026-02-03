@@ -1,0 +1,1625 @@
+{
+  "version": "1.0",
+  "generatedAt": "2026-02-03",
+  "totalQuestions": 50,
+  "examTypes": [
+    "SAT",
+    "ACT",
+    "both"
+  ],
+  "difficultyRange": [
+    1,
+    5
+  ],
+  "stationTypes": [
+    "ticket",
+    "fridge",
+    "prep",
+    "stove",
+    "plating"
+  ],
+  "questions": [
+    {
+      "id": "q001",
+      "skillId": "sat-rw-info-main-idea",
+      "examType": "SAT",
+      "section": "Reading & Writing",
+      "contentDomain": "Information and Ideas",
+      "subskill": "Central Ideas and Details",
+      "difficulty": 2,
+      "stationType": "fridge",
+      "timeBudget": 20,
+      "stem": "A recent study found that urban trees can reduce air temperature by up to 5\u00b0F in surrounding areas. The cooling effect is most pronounced during summer afternoons. What is the main idea of this passage?",
+      "choices": [
+        {
+          "id": "A",
+          "text": "Urban trees are expensive to maintain"
+        },
+        {
+          "id": "B",
+          "text": "Trees provide cooling benefits in cities"
+        },
+        {
+          "id": "C",
+          "text": "Summer afternoons are the hottest time"
+        },
+        {
+          "id": "D",
+          "text": "Air temperature varies by location"
+        }
+      ],
+      "correctChoiceId": "B",
+      "explanation": "The passage's main point is that urban trees reduce temperature (provide cooling). Choice B directly states this central idea. A is not mentioned, C is a detail, D is too general."
+    },
+    {
+      "id": "q002",
+      "skillId": "sat-rw-info-inference",
+      "examType": "SAT",
+      "section": "Reading & Writing",
+      "contentDomain": "Information and Ideas",
+      "subskill": "Inferences",
+      "difficulty": 3,
+      "stationType": "prep",
+      "timeBudget": 35,
+      "stem": "Marine biologists have observed that certain fish species change their feeding patterns when water temperatures rise above 75\u00b0F. Based on this, what can be inferred?",
+      "choices": [
+        {
+          "id": "A",
+          "text": "All fish prefer cold water"
+        },
+        {
+          "id": "B",
+          "text": "Temperature affects fish behavior"
+        },
+        {
+          "id": "C",
+          "text": "Fish cannot survive in warm water"
+        },
+        {
+          "id": "D",
+          "text": "Marine biologists study only fish"
+        }
+      ],
+      "correctChoiceId": "B",
+      "explanation": "If fish change feeding patterns when temperature changes, we can infer temperature affects behavior. A is too extreme, C contradicts the passage, D is not supported."
+    },
+    {
+      "id": "q003",
+      "skillId": "sat-rw-craft-purpose",
+      "examType": "SAT",
+      "section": "Reading & Writing",
+      "contentDomain": "Craft and Structure",
+      "subskill": "Words in Context",
+      "difficulty": 2,
+      "stationType": "fridge",
+      "timeBudget": 18,
+      "stem": "The scientist's theory was initially met with skepticism, but later evidence proved it was _____ all along. Which word best completes the sentence?",
+      "choices": [
+        {
+          "id": "A",
+          "text": "dubious"
+        },
+        {
+          "id": "B",
+          "text": "valid"
+        },
+        {
+          "id": "C",
+          "text": "ambiguous"
+        },
+        {
+          "id": "D",
+          "text": "obsolete"
+        }
+      ],
+      "correctChoiceId": "B",
+      "explanation": "'Valid' means correct or sound. Since evidence proved the theory, it was valid. Dubious means doubtful, ambiguous means unclear, obsolete means outdated - none fit the positive outcome."
+    },
+    {
+      "id": "q004",
+      "skillId": "sat-rw-craft-structure",
+      "examType": "SAT",
+      "section": "Reading & Writing",
+      "contentDomain": "Craft and Structure",
+      "subskill": "Text Structure and Purpose",
+      "difficulty": 3,
+      "stationType": "prep",
+      "timeBudget": 40,
+      "stem": "First, mix the dry ingredients. Next, add wet ingredients gradually. Finally, bake at 350\u00b0F for 25 minutes. What text structure is used?",
+      "choices": [
+        {
+          "id": "A",
+          "text": "Compare and contrast"
+        },
+        {
+          "id": "B",
+          "text": "Cause and effect"
+        },
+        {
+          "id": "C",
+          "text": "Chronological sequence"
+        },
+        {
+          "id": "D",
+          "text": "Problem and solution"
+        }
+      ],
+      "correctChoiceId": "C",
+      "explanation": "Signal words 'First', 'Next', 'Finally' indicate chronological sequence - steps in order. The text is not comparing, showing causation, or solving a problem."
+    },
+    {
+      "id": "q005",
+      "skillId": "sat-rw-expression-transitions",
+      "examType": "SAT",
+      "section": "Reading & Writing",
+      "contentDomain": "Expression of Ideas",
+      "subskill": "Transitions",
+      "difficulty": 2,
+      "stationType": "fridge",
+      "timeBudget": 20,
+      "stem": "The experiment failed to produce results. _____, the researchers learned valuable information about the methodology. Which transition fits best?",
+      "choices": [
+        {
+          "id": "A",
+          "text": "Therefore"
+        },
+        {
+          "id": "B",
+          "text": "However"
+        },
+        {
+          "id": "C",
+          "text": "Similarly"
+        },
+        {
+          "id": "D",
+          "text": "Consequently"
+        }
+      ],
+      "correctChoiceId": "B",
+      "explanation": "'However' shows contrast - despite failure, something positive happened. Therefore/Consequently show causation, Similarly shows similarity - none fit the contrasting relationship."
+    },
+    {
+      "id": "q006",
+      "skillId": "sat-rw-conv-comma",
+      "examType": "SAT",
+      "section": "Reading & Writing",
+      "contentDomain": "Standard English Conventions",
+      "subskill": "Comma Usage",
+      "difficulty": 2,
+      "stationType": "fridge",
+      "timeBudget": 15,
+      "stem": "Choose the correctly punctuated sentence:",
+      "choices": [
+        {
+          "id": "A",
+          "text": "My friend who lives in Boston is visiting."
+        },
+        {
+          "id": "B",
+          "text": "My friend, who lives in Boston, is visiting."
+        },
+        {
+          "id": "C",
+          "text": "My friend who lives in Boston, is visiting."
+        },
+        {
+          "id": "D",
+          "text": "My friend, who lives, in Boston is visiting."
+        }
+      ],
+      "correctChoiceId": "B",
+      "explanation": "'who lives in Boston' is a nonessential clause (extra information), so it needs commas on both sides. Without commas (A), it's essential. C and D have incorrect comma placement."
+    },
+    {
+      "id": "q007",
+      "skillId": "sat-rw-conv-subject-verb",
+      "examType": "SAT",
+      "section": "Reading & Writing",
+      "contentDomain": "Standard English Conventions",
+      "subskill": "Subject-Verb Agreement",
+      "difficulty": 2,
+      "stationType": "fridge",
+      "timeBudget": 18,
+      "stem": "The team of scientists _____ conducting important research. Which verb is correct?",
+      "choices": [
+        {
+          "id": "A",
+          "text": "is"
+        },
+        {
+          "id": "B",
+          "text": "are"
+        },
+        {
+          "id": "C",
+          "text": "were"
+        },
+        {
+          "id": "D",
+          "text": "be"
+        }
+      ],
+      "correctChoiceId": "A",
+      "explanation": "The subject is 'team' (singular), not 'scientists'. Singular subjects take 'is'. 'Of scientists' is a prepositional phrase that doesn't affect agreement. Present tense 'is' matches context."
+    },
+    {
+      "id": "q008",
+      "skillId": "sat-rw-conv-pronoun",
+      "examType": "SAT",
+      "section": "Reading & Writing",
+      "contentDomain": "Standard English Conventions",
+      "subskill": "Pronoun-Antecedent Agreement",
+      "difficulty": 3,
+      "stationType": "prep",
+      "timeBudget": 25,
+      "stem": "Each student must bring _____ own laptop to class. Which pronoun is correct?",
+      "choices": [
+        {
+          "id": "A",
+          "text": "his or her"
+        },
+        {
+          "id": "B",
+          "text": "their"
+        },
+        {
+          "id": "C",
+          "text": "its"
+        },
+        {
+          "id": "D",
+          "text": "our"
+        }
+      ],
+      "correctChoiceId": "A",
+      "explanation": "'Each student' is singular, so the pronoun must be singular. 'His or her' is the traditional singular form. While 'their' is increasingly accepted, 'his or her' is most grammatically precise. 'Its' is for objects, 'our' doesn't match."
+    },
+    {
+      "id": "q009",
+      "skillId": "sat-math-algebra-linear",
+      "examType": "SAT",
+      "section": "Math",
+      "contentDomain": "Algebra",
+      "subskill": "Linear Equations in One Variable",
+      "difficulty": 2,
+      "stationType": "fridge",
+      "timeBudget": 20,
+      "stem": "Solve for x: 3x + 7 = 22",
+      "choices": [
+        {
+          "id": "A",
+          "text": "x = 3"
+        },
+        {
+          "id": "B",
+          "text": "x = 5"
+        },
+        {
+          "id": "C",
+          "text": "x = 7"
+        },
+        {
+          "id": "D",
+          "text": "x = 15"
+        }
+      ],
+      "correctChoiceId": "B",
+      "explanation": "Subtract 7 from both sides: 3x = 15. Divide both sides by 3: x = 5. Check: 3(5) + 7 = 15 + 7 = 22 \u2713"
+    },
+    {
+      "id": "q010",
+      "skillId": "sat-math-algebra-linear",
+      "examType": "SAT",
+      "section": "Math",
+      "contentDomain": "Algebra",
+      "subskill": "Linear Equations in One Variable",
+      "difficulty": 3,
+      "stationType": "prep",
+      "timeBudget": 35,
+      "stem": "If 2(x - 3) = 4x + 8, what is the value of x?",
+      "choices": [
+        {
+          "id": "A",
+          "text": "x = -7"
+        },
+        {
+          "id": "B",
+          "text": "x = -5"
+        },
+        {
+          "id": "C",
+          "text": "x = 5"
+        },
+        {
+          "id": "D",
+          "text": "x = 7"
+        }
+      ],
+      "correctChoiceId": "A",
+      "explanation": "Distribute: 2x - 6 = 4x + 8. Subtract 2x: -6 = 2x + 8. Subtract 8: -14 = 2x. Divide by 2: x = -7."
+    },
+    {
+      "id": "q011",
+      "skillId": "sat-math-algebra-systems",
+      "examType": "SAT",
+      "section": "Math",
+      "contentDomain": "Algebra",
+      "subskill": "Systems of Linear Equations",
+      "difficulty": 4,
+      "stationType": "stove",
+      "timeBudget": 70,
+      "stem": "If x + y = 10 and x - y = 4, what is the value of x?",
+      "choices": [
+        {
+          "id": "A",
+          "text": "x = 3"
+        },
+        {
+          "id": "B",
+          "text": "x = 6"
+        },
+        {
+          "id": "C",
+          "text": "x = 7"
+        },
+        {
+          "id": "D",
+          "text": "x = 14"
+        }
+      ],
+      "correctChoiceId": "C",
+      "explanation": "Add the equations: (x + y) + (x - y) = 10 + 4, which simplifies to 2x = 14, so x = 7. Check: If x = 7, then y = 3. 7 + 3 = 10 \u2713 and 7 - 3 = 4 \u2713"
+    },
+    {
+      "id": "q012",
+      "skillId": "sat-math-algebra-quadratic",
+      "examType": "SAT",
+      "section": "Math",
+      "contentDomain": "Algebra",
+      "subskill": "Quadratic Functions",
+      "difficulty": 4,
+      "stationType": "stove",
+      "timeBudget": 80,
+      "stem": "Which is a factor of x\u00b2 - 5x + 6?",
+      "choices": [
+        {
+          "id": "A",
+          "text": "(x - 1)"
+        },
+        {
+          "id": "B",
+          "text": "(x - 2)"
+        },
+        {
+          "id": "C",
+          "text": "(x + 2)"
+        },
+        {
+          "id": "D",
+          "text": "(x + 3)"
+        }
+      ],
+      "correctChoiceId": "B",
+      "explanation": "Factor x\u00b2 - 5x + 6: Find two numbers that multiply to 6 and add to -5. Those are -2 and -3. So (x - 2)(x - 3) = x\u00b2 - 5x + 6. Both (x - 2) and (x - 3) are factors; B is correct."
+    },
+    {
+      "id": "q013",
+      "skillId": "sat-math-advanced-nonlinear",
+      "examType": "SAT",
+      "section": "Math",
+      "contentDomain": "Advanced Math",
+      "subskill": "Equivalent Expressions",
+      "difficulty": 3,
+      "stationType": "prep",
+      "timeBudget": 40,
+      "stem": "Simplify: (x\u00b3)\u00b2 \u00d7 x\u2074",
+      "choices": [
+        {
+          "id": "A",
+          "text": "x\u2079"
+        },
+        {
+          "id": "B",
+          "text": "x\u00b9\u2070"
+        },
+        {
+          "id": "C",
+          "text": "x\u00b9\u00b2"
+        },
+        {
+          "id": "D",
+          "text": "x\u00b2\u2074"
+        }
+      ],
+      "correctChoiceId": "B",
+      "explanation": "(x\u00b3)\u00b2 = x\u2076 (multiply exponents). Then x\u2076 \u00d7 x\u2074 = x\u00b9\u2070 (add exponents when multiplying same base)."
+    },
+    {
+      "id": "q014",
+      "skillId": "sat-math-advanced-functions",
+      "examType": "SAT",
+      "section": "Math",
+      "contentDomain": "Advanced Math",
+      "subskill": "Nonlinear Functions",
+      "difficulty": 4,
+      "stationType": "stove",
+      "timeBudget": 75,
+      "stem": "If f(x) = 2x\u00b2 - 3, what is f(4)?",
+      "choices": [
+        {
+          "id": "A",
+          "text": "5"
+        },
+        {
+          "id": "B",
+          "text": "13"
+        },
+        {
+          "id": "C",
+          "text": "29"
+        },
+        {
+          "id": "D",
+          "text": "32"
+        }
+      ],
+      "correctChoiceId": "C",
+      "explanation": "Substitute x = 4: f(4) = 2(4)\u00b2 - 3 = 2(16) - 3 = 32 - 3 = 29."
+    },
+    {
+      "id": "q015",
+      "skillId": "sat-math-data-ratios",
+      "examType": "SAT",
+      "section": "Math",
+      "contentDomain": "Problem Solving and Data Analysis",
+      "subskill": "Ratios, Rates, Proportions",
+      "difficulty": 2,
+      "stationType": "fridge",
+      "timeBudget": 22,
+      "stem": "If 3 apples cost $2.40, how much do 5 apples cost?",
+      "choices": [
+        {
+          "id": "A",
+          "text": "$3.20"
+        },
+        {
+          "id": "B",
+          "text": "$3.60"
+        },
+        {
+          "id": "C",
+          "text": "$4.00"
+        },
+        {
+          "id": "D",
+          "text": "$4.80"
+        }
+      ],
+      "correctChoiceId": "C",
+      "explanation": "Find unit rate: $2.40 \u00f7 3 = $0.80 per apple. Then 5 apples: 5 \u00d7 $0.80 = $4.00."
+    },
+    {
+      "id": "q016",
+      "skillId": "sat-math-data-percent",
+      "examType": "SAT",
+      "section": "Math",
+      "contentDomain": "Problem Solving and Data Analysis",
+      "subskill": "Percentages",
+      "difficulty": 2,
+      "stationType": "fridge",
+      "timeBudget": 25,
+      "stem": "What is 30% of 150?",
+      "choices": [
+        {
+          "id": "A",
+          "text": "30"
+        },
+        {
+          "id": "B",
+          "text": "45"
+        },
+        {
+          "id": "C",
+          "text": "50"
+        },
+        {
+          "id": "D",
+          "text": "60"
+        }
+      ],
+      "correctChoiceId": "B",
+      "explanation": "30% = 0.30. Multiply: 0.30 \u00d7 150 = 45. Or think: 10% of 150 is 15, so 30% is 3 \u00d7 15 = 45."
+    },
+    {
+      "id": "q017",
+      "skillId": "sat-math-data-statistics",
+      "examType": "SAT",
+      "section": "Math",
+      "contentDomain": "Problem Solving and Data Analysis",
+      "subskill": "Center, Spread, Shape",
+      "difficulty": 3,
+      "stationType": "prep",
+      "timeBudget": 35,
+      "stem": "Find the median of: 3, 7, 9, 12, 15, 18, 20",
+      "choices": [
+        {
+          "id": "A",
+          "text": "9"
+        },
+        {
+          "id": "B",
+          "text": "12"
+        },
+        {
+          "id": "C",
+          "text": "13.5"
+        },
+        {
+          "id": "D",
+          "text": "15"
+        }
+      ],
+      "correctChoiceId": "B",
+      "explanation": "With 7 values, the median is the middle (4th) value. Counting: 3, 7, 9, [12], 15, 18, 20. The median is 12."
+    },
+    {
+      "id": "q018",
+      "skillId": "sat-math-data-probability",
+      "examType": "SAT",
+      "section": "Math",
+      "contentDomain": "Problem Solving and Data Analysis",
+      "subskill": "Probability",
+      "difficulty": 3,
+      "stationType": "prep",
+      "timeBudget": 40,
+      "stem": "A bag contains 5 red marbles and 3 blue marbles. What is the probability of drawing a blue marble?",
+      "choices": [
+        {
+          "id": "A",
+          "text": "1/8"
+        },
+        {
+          "id": "B",
+          "text": "3/8"
+        },
+        {
+          "id": "C",
+          "text": "3/5"
+        },
+        {
+          "id": "D",
+          "text": "5/8"
+        }
+      ],
+      "correctChoiceId": "B",
+      "explanation": "Total marbles = 5 + 3 = 8. Blue marbles = 3. Probability = 3/8."
+    },
+    {
+      "id": "q019",
+      "skillId": "sat-math-geo-area",
+      "examType": "SAT",
+      "section": "Math",
+      "contentDomain": "Geometry and Trigonometry",
+      "subskill": "Area and Volume",
+      "difficulty": 2,
+      "stationType": "fridge",
+      "timeBudget": 20,
+      "stem": "What is the area of a rectangle with length 8 and width 5?",
+      "choices": [
+        {
+          "id": "A",
+          "text": "13"
+        },
+        {
+          "id": "B",
+          "text": "26"
+        },
+        {
+          "id": "C",
+          "text": "40"
+        },
+        {
+          "id": "D",
+          "text": "80"
+        }
+      ],
+      "correctChoiceId": "C",
+      "explanation": "Area of rectangle = length \u00d7 width = 8 \u00d7 5 = 40."
+    },
+    {
+      "id": "q020",
+      "skillId": "sat-math-geo-circles",
+      "examType": "SAT",
+      "section": "Math",
+      "contentDomain": "Geometry and Trigonometry",
+      "subskill": "Circles",
+      "difficulty": 3,
+      "stationType": "prep",
+      "timeBudget": 40,
+      "stem": "If a circle has radius 6, what is its circumference? (Use \u03c0 \u2248 3.14)",
+      "choices": [
+        {
+          "id": "A",
+          "text": "12\u03c0"
+        },
+        {
+          "id": "B",
+          "text": "36\u03c0"
+        },
+        {
+          "id": "C",
+          "text": "18.84"
+        },
+        {
+          "id": "D",
+          "text": "37.68"
+        }
+      ],
+      "correctChoiceId": "A",
+      "explanation": "Circumference = 2\u03c0r = 2\u03c0(6) = 12\u03c0. In decimal form, 12 \u00d7 3.14 \u2248 37.68, but the exact answer 12\u03c0 is preferred."
+    },
+    {
+      "id": "q021",
+      "skillId": "sat-math-geo-triangles",
+      "examType": "SAT",
+      "section": "Math",
+      "contentDomain": "Geometry and Trigonometry",
+      "subskill": "Right Triangles and Trigonometry",
+      "difficulty": 4,
+      "stationType": "stove",
+      "timeBudget": 70,
+      "stem": "In a right triangle, one leg is 3 and the other leg is 4. What is the length of the hypotenuse?",
+      "choices": [
+        {
+          "id": "A",
+          "text": "5"
+        },
+        {
+          "id": "B",
+          "text": "7"
+        },
+        {
+          "id": "C",
+          "text": "12"
+        },
+        {
+          "id": "D",
+          "text": "25"
+        }
+      ],
+      "correctChoiceId": "A",
+      "explanation": "Use Pythagorean theorem: a\u00b2 + b\u00b2 = c\u00b2. So 3\u00b2 + 4\u00b2 = c\u00b2, which gives 9 + 16 = 25 = c\u00b2. Therefore c = 5. This is the 3-4-5 Pythagorean triple."
+    },
+    {
+      "id": "q022",
+      "skillId": "act-english-usage",
+      "examType": "ACT",
+      "section": "English",
+      "contentDomain": "Conventions of Standard English",
+      "subskill": "Sentence Structure",
+      "difficulty": 2,
+      "stationType": "fridge",
+      "timeBudget": 18,
+      "stem": "Choose the sentence without a fragment:",
+      "choices": [
+        {
+          "id": "A",
+          "text": "Because it was raining."
+        },
+        {
+          "id": "B",
+          "text": "The dog running fast."
+        },
+        {
+          "id": "C",
+          "text": "While I was sleeping."
+        },
+        {
+          "id": "D",
+          "text": "She completed the project."
+        }
+      ],
+      "correctChoiceId": "D",
+      "explanation": "D is a complete sentence with subject (She) and predicate (completed the project). A, B, and C are fragments lacking either a subject or complete verb."
+    },
+    {
+      "id": "q023",
+      "skillId": "act-english-punctuation",
+      "examType": "ACT",
+      "section": "English",
+      "contentDomain": "Conventions of Standard English",
+      "subskill": "Punctuation",
+      "difficulty": 2,
+      "stationType": "fridge",
+      "timeBudget": 15,
+      "stem": "Which sentence uses the semicolon correctly?",
+      "choices": [
+        {
+          "id": "A",
+          "text": "I like pizza; and pasta."
+        },
+        {
+          "id": "B",
+          "text": "She studied hard; she passed the test."
+        },
+        {
+          "id": "C",
+          "text": "We went to; the park."
+        },
+        {
+          "id": "D",
+          "text": "The cat; was sleeping."
+        }
+      ],
+      "correctChoiceId": "B",
+      "explanation": "Semicolons join two independent clauses. B has two complete sentences. A incorrectly uses semicolon before 'and', C and D split a single clause incorrectly."
+    },
+    {
+      "id": "q024",
+      "skillId": "act-math-algebra",
+      "examType": "ACT",
+      "section": "Math",
+      "contentDomain": "Algebra",
+      "subskill": "Expressions and Equations",
+      "difficulty": 2,
+      "stationType": "fridge",
+      "timeBudget": 22,
+      "stem": "Simplify: 3(x + 2) - 2x",
+      "choices": [
+        {
+          "id": "A",
+          "text": "x + 2"
+        },
+        {
+          "id": "B",
+          "text": "x + 6"
+        },
+        {
+          "id": "C",
+          "text": "5x + 2"
+        },
+        {
+          "id": "D",
+          "text": "5x + 6"
+        }
+      ],
+      "correctChoiceId": "B",
+      "explanation": "Distribute: 3x + 6 - 2x. Combine like terms: (3x - 2x) + 6 = x + 6."
+    },
+    {
+      "id": "q025",
+      "skillId": "act-math-geo",
+      "examType": "ACT",
+      "section": "Math",
+      "contentDomain": "Geometry",
+      "subskill": "Plane Geometry",
+      "difficulty": 3,
+      "stationType": "prep",
+      "timeBudget": 35,
+      "stem": "What is the perimeter of a square with side length 7?",
+      "choices": [
+        {
+          "id": "A",
+          "text": "14"
+        },
+        {
+          "id": "B",
+          "text": "21"
+        },
+        {
+          "id": "C",
+          "text": "28"
+        },
+        {
+          "id": "D",
+          "text": "49"
+        }
+      ],
+      "correctChoiceId": "C",
+      "explanation": "Perimeter of square = 4 \u00d7 side = 4 \u00d7 7 = 28. (Note: Area would be 7\u00b2 = 49.)"
+    },
+    {
+      "id": "q026",
+      "skillId": "act-science-interpretation",
+      "examType": "ACT",
+      "section": "Science",
+      "contentDomain": "Interpretation of Data",
+      "subskill": "Reading Graphs",
+      "difficulty": 2,
+      "stationType": "fridge",
+      "timeBudget": 25,
+      "stem": "A graph shows temperature increasing from 0\u00b0C to 100\u00b0C over 10 minutes. What is the average rate of temperature increase per minute?",
+      "choices": [
+        {
+          "id": "A",
+          "text": "1\u00b0C/min"
+        },
+        {
+          "id": "B",
+          "text": "5\u00b0C/min"
+        },
+        {
+          "id": "C",
+          "text": "10\u00b0C/min"
+        },
+        {
+          "id": "D",
+          "text": "50\u00b0C/min"
+        }
+      ],
+      "correctChoiceId": "C",
+      "explanation": "Change in temperature = 100\u00b0C - 0\u00b0C = 100\u00b0C. Time = 10 minutes. Rate = 100\u00b0C \u00f7 10 min = 10\u00b0C/min."
+    },
+    {
+      "id": "q027",
+      "skillId": "act-science-evaluation",
+      "examType": "ACT",
+      "section": "Science",
+      "contentDomain": "Scientific Investigation",
+      "subskill": "Research Design",
+      "difficulty": 3,
+      "stationType": "prep",
+      "timeBudget": 40,
+      "stem": "A scientist wants to test if fertilizer increases plant growth. What should be the control group?",
+      "choices": [
+        {
+          "id": "A",
+          "text": "Plants with double fertilizer"
+        },
+        {
+          "id": "B",
+          "text": "Plants with no fertilizer"
+        },
+        {
+          "id": "C",
+          "text": "Plants with different types of fertilizer"
+        },
+        {
+          "id": "D",
+          "text": "Plants in different temperatures"
+        }
+      ],
+      "correctChoiceId": "B",
+      "explanation": "A control group receives no treatment (no fertilizer) to compare against the experimental group. This isolates the variable being tested."
+    },
+    {
+      "id": "q028",
+      "skillId": "sat-rw-info-vocab",
+      "examType": "both",
+      "section": "Reading & Writing",
+      "contentDomain": "Craft and Structure",
+      "subskill": "Vocabulary",
+      "difficulty": 1,
+      "stationType": "ticket",
+      "timeBudget": 8,
+      "stem": "Which word means 'to make worse'?",
+      "choices": [
+        {
+          "id": "A",
+          "text": "Improve"
+        },
+        {
+          "id": "B",
+          "text": "Exacerbate"
+        },
+        {
+          "id": "C",
+          "text": "Mitigate"
+        },
+        {
+          "id": "D",
+          "text": "Clarify"
+        }
+      ],
+      "correctChoiceId": "B",
+      "explanation": "'Exacerbate' means to make worse. Improve means better, mitigate means lessen, clarify means make clear."
+    },
+    {
+      "id": "q029",
+      "skillId": "sat-math-algebra-basic",
+      "examType": "both",
+      "section": "Math",
+      "contentDomain": "Algebra",
+      "subskill": "Basic Operations",
+      "difficulty": 1,
+      "stationType": "ticket",
+      "timeBudget": 7,
+      "stem": "What is 15% of 200?",
+      "choices": [
+        {
+          "id": "A",
+          "text": "15"
+        },
+        {
+          "id": "B",
+          "text": "20"
+        },
+        {
+          "id": "C",
+          "text": "30"
+        },
+        {
+          "id": "D",
+          "text": "50"
+        }
+      ],
+      "correctChoiceId": "C",
+      "explanation": "15% = 0.15. Multiply: 0.15 \u00d7 200 = 30."
+    },
+    {
+      "id": "q030",
+      "skillId": "sat-rw-conv-word-choice",
+      "examType": "both",
+      "section": "Reading & Writing",
+      "contentDomain": "Standard English Conventions",
+      "subskill": "Grammar",
+      "difficulty": 1,
+      "stationType": "ticket",
+      "timeBudget": 10,
+      "stem": "Which is correct?",
+      "choices": [
+        {
+          "id": "A",
+          "text": "She don't like pizza"
+        },
+        {
+          "id": "B",
+          "text": "She doesn't like pizza"
+        },
+        {
+          "id": "C",
+          "text": "She didn't liked pizza"
+        },
+        {
+          "id": "D",
+          "text": "She don't liked pizza"
+        }
+      ],
+      "correctChoiceId": "B",
+      "explanation": "'She' requires 'doesn't' (does not), not 'don't' (do not). Third person singular uses 'doesn't'."
+    },
+    {
+      "id": "q031",
+      "skillId": "sat-math-data-interpret",
+      "examType": "both",
+      "section": "Math",
+      "contentDomain": "Problem Solving and Data Analysis",
+      "subskill": "Data Interpretation",
+      "difficulty": 3,
+      "stationType": "plating",
+      "timeBudget": 35,
+      "stem": "A store sold 40 items on Monday, 60 on Tuesday, and 50 on Wednesday. What was the average daily sales?",
+      "choices": [
+        {
+          "id": "A",
+          "text": "40"
+        },
+        {
+          "id": "B",
+          "text": "45"
+        },
+        {
+          "id": "C",
+          "text": "50"
+        },
+        {
+          "id": "D",
+          "text": "150"
+        }
+      ],
+      "correctChoiceId": "C",
+      "explanation": "Average = (40 + 60 + 50) \u00f7 3 = 150 \u00f7 3 = 50 items per day."
+    },
+    {
+      "id": "q032",
+      "skillId": "sat-rw-expression-style",
+      "examType": "SAT",
+      "section": "Reading & Writing",
+      "contentDomain": "Expression of Ideas",
+      "subskill": "Rhetorical Synthesis",
+      "difficulty": 3,
+      "stationType": "plating",
+      "timeBudget": 40,
+      "stem": "Which sentence best concludes a paragraph about the benefits of exercise?",
+      "choices": [
+        {
+          "id": "A",
+          "text": "Many people enjoy running."
+        },
+        {
+          "id": "B",
+          "text": "Therefore, regular physical activity improves overall health."
+        },
+        {
+          "id": "C",
+          "text": "Gyms are expensive."
+        },
+        {
+          "id": "D",
+          "text": "Exercise can be difficult."
+        }
+      ],
+      "correctChoiceId": "B",
+      "explanation": "B provides a clear conclusion that summarizes the main idea about benefits. A is too narrow, C and D introduce negative ideas that don't match positive benefits."
+    },
+    {
+      "id": "q033",
+      "skillId": "sat-rw-info-evidence",
+      "examType": "SAT",
+      "section": "Reading & Writing",
+      "contentDomain": "Information and Ideas",
+      "subskill": "Command of Evidence",
+      "difficulty": 5,
+      "stationType": "stove",
+      "timeBudget": 85,
+      "passage": "Recent studies have demonstrated that regular meditation can reduce stress levels by up to 40%. Participants who meditated for 20 minutes daily showed significant decreases in cortisol, the stress hormone. Additionally, MRI scans revealed increased gray matter in brain regions associated with emotional regulation.",
+      "stem": "Which evidence from the passage best supports the claim that meditation has measurable physical effects?",
+      "choices": [
+        {
+          "id": "A",
+          "text": "Meditation can reduce stress by 40%"
+        },
+        {
+          "id": "B",
+          "text": "Participants meditated for 20 minutes daily"
+        },
+        {
+          "id": "C",
+          "text": "Decreases in cortisol were observed"
+        },
+        {
+          "id": "D",
+          "text": "MRI scans showed increased gray matter"
+        }
+      ],
+      "correctChoiceId": "D",
+      "explanation": "MRI evidence of increased gray matter is direct physical proof. While cortisol (C) is also physical, the MRI provides visual, structural evidence. A is a statistic, B is a detail about the study."
+    },
+    {
+      "id": "q034",
+      "skillId": "sat-math-algebra-inequality",
+      "examType": "SAT",
+      "section": "Math",
+      "contentDomain": "Algebra",
+      "subskill": "Linear Inequalities",
+      "difficulty": 4,
+      "stationType": "stove",
+      "timeBudget": 75,
+      "stem": "Solve for x: -3x + 5 > 14",
+      "choices": [
+        {
+          "id": "A",
+          "text": "x > -3"
+        },
+        {
+          "id": "B",
+          "text": "x < -3"
+        },
+        {
+          "id": "C",
+          "text": "x > 3"
+        },
+        {
+          "id": "D",
+          "text": "x < 3"
+        }
+      ],
+      "correctChoiceId": "B",
+      "explanation": "Subtract 5: -3x > 9. Divide by -3 (flip inequality): x < -3. Remember: dividing by a negative reverses the inequality sign."
+    },
+    {
+      "id": "q035",
+      "skillId": "sat-math-advanced-exponential",
+      "examType": "SAT",
+      "section": "Math",
+      "contentDomain": "Advanced Math",
+      "subskill": "Exponential Functions",
+      "difficulty": 5,
+      "stationType": "stove",
+      "timeBudget": 90,
+      "stem": "A population doubles every 3 years. If the initial population is 500, what is the population after 9 years?",
+      "choices": [
+        {
+          "id": "A",
+          "text": "1,500"
+        },
+        {
+          "id": "B",
+          "text": "2,000"
+        },
+        {
+          "id": "C",
+          "text": "3,000"
+        },
+        {
+          "id": "D",
+          "text": "4,000"
+        }
+      ],
+      "correctChoiceId": "D",
+      "explanation": "9 years = 3 periods of 3 years. Doubles 3 times: 500 \u2192 1000 \u2192 2000 \u2192 4000. Or use formula: P = 500 \u00d7 2\u00b3 = 500 \u00d7 8 = 4000."
+    },
+    {
+      "id": "q036",
+      "skillId": "sat-rw-craft-tone",
+      "examType": "SAT",
+      "section": "Reading & Writing",
+      "contentDomain": "Craft and Structure",
+      "subskill": "Text Structure",
+      "difficulty": 3,
+      "stationType": "prep",
+      "timeBudget": 35,
+      "stem": "The scientist's findings were groundbreaking, revolutionary, and paradigm-shifting. What is the author's tone?",
+      "choices": [
+        {
+          "id": "A",
+          "text": "Critical"
+        },
+        {
+          "id": "B",
+          "text": "Enthusiastic"
+        },
+        {
+          "id": "C",
+          "text": "Neutral"
+        },
+        {
+          "id": "D",
+          "text": "Pessimistic"
+        }
+      ],
+      "correctChoiceId": "B",
+      "explanation": "The use of strong positive words like 'groundbreaking,' 'revolutionary,' and 'paradigm-shifting' shows enthusiasm. The tone is celebratory, not critical, neutral, or negative."
+    },
+    {
+      "id": "q037",
+      "skillId": "sat-math-data-scatterplot",
+      "examType": "SAT",
+      "section": "Math",
+      "contentDomain": "Problem Solving and Data Analysis",
+      "subskill": "Two-variable Data",
+      "difficulty": 4,
+      "stationType": "stove",
+      "timeBudget": 70,
+      "stem": "A scatterplot shows that as study time increases, test scores increase. What type of correlation is this?",
+      "choices": [
+        {
+          "id": "A",
+          "text": "Negative correlation"
+        },
+        {
+          "id": "B",
+          "text": "No correlation"
+        },
+        {
+          "id": "C",
+          "text": "Positive correlation"
+        },
+        {
+          "id": "D",
+          "text": "Causation"
+        }
+      ],
+      "correctChoiceId": "C",
+      "explanation": "When both variables increase together, it's a positive correlation. Negative means one increases as other decreases. D (causation) is about cause-effect, not correlation type."
+    },
+    {
+      "id": "q038",
+      "skillId": "act-math-trig",
+      "examType": "ACT",
+      "section": "Math",
+      "contentDomain": "Geometry",
+      "subskill": "Trigonometry",
+      "difficulty": 4,
+      "stationType": "stove",
+      "timeBudget": 75,
+      "stem": "In a right triangle, if sin(\u03b8) = 3/5, what is cos(\u03b8)?",
+      "choices": [
+        {
+          "id": "A",
+          "text": "3/5"
+        },
+        {
+          "id": "B",
+          "text": "4/5"
+        },
+        {
+          "id": "C",
+          "text": "5/3"
+        },
+        {
+          "id": "D",
+          "text": "5/4"
+        }
+      ],
+      "correctChoiceId": "B",
+      "explanation": "Use identity: sin\u00b2(\u03b8) + cos\u00b2(\u03b8) = 1. (3/5)\u00b2 + cos\u00b2(\u03b8) = 1. 9/25 + cos\u00b2(\u03b8) = 1. cos\u00b2(\u03b8) = 16/25. cos(\u03b8) = 4/5."
+    },
+    {
+      "id": "q039",
+      "skillId": "sat-rw-conv-modifier",
+      "examType": "SAT",
+      "section": "Reading & Writing",
+      "contentDomain": "Standard English Conventions",
+      "subskill": "Modifiers",
+      "difficulty": 3,
+      "stationType": "prep",
+      "timeBudget": 30,
+      "stem": "Which sentence correctly places the modifier?",
+      "choices": [
+        {
+          "id": "A",
+          "text": "Running quickly, the finish line was reached."
+        },
+        {
+          "id": "B",
+          "text": "The finish line was reached running quickly."
+        },
+        {
+          "id": "C",
+          "text": "Running quickly, she reached the finish line."
+        },
+        {
+          "id": "D",
+          "text": "She reached running quickly the finish line."
+        }
+      ],
+      "correctChoiceId": "C",
+      "explanation": "'Running quickly' must modify the person, not the finish line. C correctly places 'she' immediately after the modifier. A has a dangling modifier, B and D are awkward."
+    },
+    {
+      "id": "q040",
+      "skillId": "sat-math-algebra-absolute",
+      "examType": "SAT",
+      "section": "Math",
+      "contentDomain": "Algebra",
+      "subskill": "Absolute Value",
+      "difficulty": 3,
+      "stationType": "prep",
+      "timeBudget": 40,
+      "stem": "Solve: |x - 5| = 3",
+      "choices": [
+        {
+          "id": "A",
+          "text": "x = 2 or x = 8"
+        },
+        {
+          "id": "B",
+          "text": "x = -2 or x = 2"
+        },
+        {
+          "id": "C",
+          "text": "x = 3 or x = 5"
+        },
+        {
+          "id": "D",
+          "text": "x = 5 or x = 8"
+        }
+      ],
+      "correctChoiceId": "A",
+      "explanation": "|x - 5| = 3 means x - 5 = 3 OR x - 5 = -3. First case: x = 8. Second case: x = 2. So x = 2 or x = 8."
+    },
+    {
+      "id": "q041",
+      "skillId": "act-english-strategy",
+      "examType": "ACT",
+      "section": "English",
+      "contentDomain": "Knowledge of Language",
+      "subskill": "Precision and Conciseness",
+      "difficulty": 2,
+      "stationType": "fridge",
+      "timeBudget": 20,
+      "stem": "Which is most concise?",
+      "choices": [
+        {
+          "id": "A",
+          "text": "Due to the fact that it was raining"
+        },
+        {
+          "id": "B",
+          "text": "Because of the reason that it was raining"
+        },
+        {
+          "id": "C",
+          "text": "Because it was raining"
+        },
+        {
+          "id": "D",
+          "text": "Owing to the fact that it was raining"
+        }
+      ],
+      "correctChoiceId": "C",
+      "explanation": "'Because it was raining' is the most concise and clear. A, B, and D are wordy phrases that mean the same thing."
+    },
+    {
+      "id": "q042",
+      "skillId": "sat-math-geo-volume",
+      "examType": "SAT",
+      "section": "Math",
+      "contentDomain": "Geometry and Trigonometry",
+      "subskill": "Volume",
+      "difficulty": 3,
+      "stationType": "prep",
+      "timeBudget": 40,
+      "stem": "What is the volume of a rectangular prism with length 4, width 3, and height 5?",
+      "choices": [
+        {
+          "id": "A",
+          "text": "12"
+        },
+        {
+          "id": "B",
+          "text": "20"
+        },
+        {
+          "id": "C",
+          "text": "60"
+        },
+        {
+          "id": "D",
+          "text": "120"
+        }
+      ],
+      "correctChoiceId": "C",
+      "explanation": "Volume = length \u00d7 width \u00d7 height = 4 \u00d7 3 \u00d7 5 = 60 cubic units."
+    },
+    {
+      "id": "q043",
+      "skillId": "sat-rw-info-compare",
+      "examType": "SAT",
+      "section": "Reading & Writing",
+      "contentDomain": "Information and Ideas",
+      "subskill": "Cross-text Connections",
+      "difficulty": 4,
+      "stationType": "stove",
+      "timeBudget": 75,
+      "passage": "Text 1: Solar panels convert sunlight directly into electricity. Text 2: Wind turbines generate electricity from wind energy.",
+      "stem": "What do both texts focus on?",
+      "choices": [
+        {
+          "id": "A",
+          "text": "Types of renewable energy"
+        },
+        {
+          "id": "B",
+          "text": "Efficiency of energy sources"
+        },
+        {
+          "id": "C",
+          "text": "Cost of installation"
+        },
+        {
+          "id": "D",
+          "text": "Environmental impact"
+        }
+      ],
+      "correctChoiceId": "A",
+      "explanation": "Both texts describe renewable energy sources (solar and wind). Neither discusses efficiency, cost, or environmental impact explicitly."
+    },
+    {
+      "id": "q044",
+      "skillId": "sat-math-data-margin-error",
+      "examType": "SAT",
+      "section": "Math",
+      "contentDomain": "Problem Solving and Data Analysis",
+      "subskill": "Evaluating Statistical Claims",
+      "difficulty": 4,
+      "stationType": "stove",
+      "timeBudget": 70,
+      "stem": "A poll of 1000 people shows 60% support, with a margin of error of \u00b13%. What is the range of support?",
+      "choices": [
+        {
+          "id": "A",
+          "text": "57-60%"
+        },
+        {
+          "id": "B",
+          "text": "57-63%"
+        },
+        {
+          "id": "C",
+          "text": "60-63%"
+        },
+        {
+          "id": "D",
+          "text": "30-90%"
+        }
+      ],
+      "correctChoiceId": "B",
+      "explanation": "Margin of error \u00b13% means the true value is within 3% above or below 60%. Range: 60% - 3% = 57% to 60% + 3% = 63%."
+    },
+    {
+      "id": "q045",
+      "skillId": "act-science-hypothesis",
+      "examType": "ACT",
+      "section": "Science",
+      "contentDomain": "Scientific Investigation",
+      "subskill": "Hypothesis Testing",
+      "difficulty": 3,
+      "stationType": "prep",
+      "timeBudget": 40,
+      "stem": "A scientist hypothesizes that plants grow faster with more sunlight. What experiment would test this?",
+      "choices": [
+        {
+          "id": "A",
+          "text": "Measure plant height in darkness"
+        },
+        {
+          "id": "B",
+          "text": "Compare growth with varying light levels"
+        },
+        {
+          "id": "C",
+          "text": "Test different types of plants"
+        },
+        {
+          "id": "D",
+          "text": "Measure plant color"
+        }
+      ],
+      "correctChoiceId": "B",
+      "explanation": "To test if sunlight affects growth, compare plants with different amounts of light (independent variable) and measure growth (dependent variable). A doesn't vary light, C changes plant type, D measures wrong variable."
+    },
+    {
+      "id": "q046",
+      "skillId": "sat-rw-conv-parallel",
+      "examType": "SAT",
+      "section": "Reading & Writing",
+      "contentDomain": "Standard English Conventions",
+      "subskill": "Parallel Structure",
+      "difficulty": 3,
+      "stationType": "prep",
+      "timeBudget": 30,
+      "stem": "Which maintains parallel structure?",
+      "choices": [
+        {
+          "id": "A",
+          "text": "She likes swimming, running, and to bike."
+        },
+        {
+          "id": "B",
+          "text": "She likes swimming, running, and biking."
+        },
+        {
+          "id": "C",
+          "text": "She likes to swim, running, and biking."
+        },
+        {
+          "id": "D",
+          "text": "She likes swimming, to run, and biking."
+        }
+      ],
+      "correctChoiceId": "B",
+      "explanation": "Parallel structure requires consistent form. B uses three gerunds (-ing forms). A mixes gerund with infinitive, C and D mix forms."
+    },
+    {
+      "id": "q047",
+      "skillId": "sat-math-advanced-rational",
+      "examType": "SAT",
+      "section": "Math",
+      "contentDomain": "Advanced Math",
+      "subskill": "Rational Expressions",
+      "difficulty": 5,
+      "stationType": "stove",
+      "timeBudget": 85,
+      "stem": "Simplify: (x\u00b2 - 9) / (x - 3)",
+      "choices": [
+        {
+          "id": "A",
+          "text": "x - 3"
+        },
+        {
+          "id": "B",
+          "text": "x + 3"
+        },
+        {
+          "id": "C",
+          "text": "x\u00b2 + 3"
+        },
+        {
+          "id": "D",
+          "text": "Cannot be simplified"
+        }
+      ],
+      "correctChoiceId": "B",
+      "explanation": "Factor numerator: x\u00b2 - 9 = (x + 3)(x - 3). Cancel common factor (x - 3): (x + 3)(x - 3) / (x - 3) = x + 3."
+    },
+    {
+      "id": "q048",
+      "skillId": "sat-math-geo-angles",
+      "examType": "SAT",
+      "section": "Math",
+      "contentDomain": "Geometry and Trigonometry",
+      "subskill": "Lines and Angles",
+      "difficulty": 2,
+      "stationType": "fridge",
+      "timeBudget": 22,
+      "stem": "Two angles are supplementary. If one angle is 110\u00b0, what is the other?",
+      "choices": [
+        {
+          "id": "A",
+          "text": "70\u00b0"
+        },
+        {
+          "id": "B",
+          "text": "80\u00b0"
+        },
+        {
+          "id": "C",
+          "text": "90\u00b0"
+        },
+        {
+          "id": "D",
+          "text": "110\u00b0"
+        }
+      ],
+      "correctChoiceId": "A",
+      "explanation": "Supplementary angles sum to 180\u00b0. 180\u00b0 - 110\u00b0 = 70\u00b0."
+    },
+    {
+      "id": "q049",
+      "skillId": "sat-rw-expression-cohesion",
+      "examType": "SAT",
+      "section": "Reading & Writing",
+      "contentDomain": "Expression of Ideas",
+      "subskill": "Logical Sequence",
+      "difficulty": 3,
+      "stationType": "prep",
+      "timeBudget": 35,
+      "stem": "Where should this sentence go? 'First, preheat the oven.' [1] Mix ingredients. [2] Pour into pan. [3] Bake for 30 minutes.",
+      "choices": [
+        {
+          "id": "A",
+          "text": "Before [1]"
+        },
+        {
+          "id": "B",
+          "text": "Between [1] and [2]"
+        },
+        {
+          "id": "C",
+          "text": "Between [2] and [3]"
+        },
+        {
+          "id": "D",
+          "text": "After [3]"
+        }
+      ],
+      "correctChoiceId": "A",
+      "explanation": "'First, preheat' is the initial step, so it goes before all other steps. Logical sequence: preheat \u2192 mix \u2192 pour \u2192 bake."
+    },
+    {
+      "id": "q050",
+      "skillId": "sat-math-algebra-word-problem",
+      "examType": "both",
+      "section": "Math",
+      "contentDomain": "Algebra",
+      "subskill": "Word Problems",
+      "difficulty": 3,
+      "stationType": "prep",
+      "timeBudget": 45,
+      "stem": "A train travels 180 miles in 3 hours. At this rate, how far will it travel in 5 hours?",
+      "choices": [
+        {
+          "id": "A",
+          "text": "240 miles"
+        },
+        {
+          "id": "B",
+          "text": "270 miles"
+        },
+        {
+          "id": "C",
+          "text": "300 miles"
+        },
+        {
+          "id": "D",
+          "text": "360 miles"
+        }
+      ],
+      "correctChoiceId": "C",
+      "explanation": "Rate = 180 miles / 3 hours = 60 mph. Distance = rate \u00d7 time = 60 mph \u00d7 5 hours = 300 miles."
+    }
+  ]
+}

@@ -1,0 +1,21 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm create vite@latest . -- --template react-ts)",
+      "Bash(npm install:*)",
+      "Bash(npx tailwindcss init -p)",
+      "Bash(copy:*)",
+      "Bash(copy \"C:\\\\Users\\\\tsuom\\\\OneDrive\\\\Desktop\\\\SAC Prep\\\\skills.json\" \"C:\\\\Users\\\\tsuom\\\\OneDrive\\\\Desktop\\\\SAC Prep\\\\sat-act-kitchen-rush\\\\client\\\\src\\\\data\\\\skills.json\")",
+      "Bash(powershell -Command:*)",
+      "Bash(npx tsc:*)",
+      "Bash(npx vite build:*)",
+      "Bash(timeout 15 npx vite:*)",
+      "Bash(node -e:*)",
+      "Bash(timeout 10 npx vite:*)",
+      "Bash(timeout 12 npx vite:*)",
+      "Bash(npx playwright:*)",
+      "Bash(npx vite --port 3000)",
+      "Bash(curl:*)"
+    ]
+  }
+}
