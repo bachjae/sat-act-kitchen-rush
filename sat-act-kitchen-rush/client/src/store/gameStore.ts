@@ -1,6 +1,6 @@
 import { create } from 'zustand';
-import type { Question } from '@types/question.types';
-import type { Order } from '@types/game.types';
+import type { Question } from '@app-types/question.types';
+import type { Order } from '@app-types/game.types';
 
 interface GameState {
   status: 'idle' | 'loading' | 'playing' | 'paused' | 'ended';

@@ -1,47 +1,40 @@
-import type { Question, QuestionsData } from '@types/question.types';
-import type { StationType } from '@types/game.types';
-import mockQuestionsData from '@data/mock-questions.json';
+import mockQuestions from '@data/mock-questions.json';
+import type { Question } from '@app-types/question.types';
 
 const USE_MOCK = import.meta.env.VITE_USE_MOCK_QUESTIONS !== 'false';
 
-const mockData = mockQuestionsData as QuestionsData;
-
-export interface FetchQuestionsParams {
+export async function fetchQuestions(params: {
   count: number;
   skills?: string[];
-  stationType?: Exclude<StationType, 'serving'>;
-  difficulty?: number[];
-}
+  stationType?: string;
+}): Promise<Question[]> {
+  console.log('📦 Fetching questions:', params);
 
-export async function fetchQuestions(params: FetchQuestionsParams): Promise<Question[]> {
   if (USE_MOCK) {
-    return filterAndShuffle(mockData.questions as Question[], params);
+    console.log('✅ Using mock questions');
+    return filterAndShuffle(mockQuestions.questions as any[], params);
   }
 
-  // TODO: Fetch from Firestore when ready
+  console.warn('⚠️ Mock mode disabled, no questions available');
   return [];
 }
 
-function filterAndShuffle(questions: Question[], params: FetchQuestionsParams): Question[] {
+function filterAndShuffle(questions: any[], params: any): Question[] {
   let filtered = [...questions];
 
   if (params.stationType) {
     filtered = filtered.filter(q => q.stationType === params.stationType);
+    console.log(`🔍 Filtered to ${params.stationType}: ${filtered.length} questions`);
   }
 
   if (params.skills && params.skills.length > 0) {
-    filtered = filtered.filter(q => params.skills!.includes(q.skillId));
+    filtered = filtered.filter(q => params.skills.includes(q.skillId));
   }
 
-  if (params.difficulty && params.difficulty.length > 0) {
-    filtered = filtered.filter(q => params.difficulty!.includes(q.difficulty));
-  }
+  // Shuffle
+  const shuffled = filtered.sort(() => Math.random() - 0.5);
+  const result = shuffled.slice(0, params.count);
 
-  // Fisher-Yates shuffle
-  for (let i = filtered.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [filtered[i], filtered[j]] = [filtered[j], filtered[i]];
-  }
-
-  return filtered.slice(0, params.count);
+  console.log(`✨ Returning ${result.length} questions`);
+  return result as Question[];
 }

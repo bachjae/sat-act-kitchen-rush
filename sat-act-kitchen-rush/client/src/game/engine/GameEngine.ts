@@ -3,7 +3,7 @@ import { KITCHEN_LAYOUT } from '@game/config/kitchen-layout';
 import { PlayerEntity } from '@game/entities/PlayerEntity';
 import { useGameStore } from '@store/gameStore';
 import { fetchQuestions } from '@services/questions.service';
-import type { Station } from '@types/game.types';
+import type { Station } from '@app-types/game.types';
 
 const STATION_COLORS: Record<string, number> = {
   ticket: 0xFFD60A,
@@ -25,6 +25,11 @@ export class GameEngine {
     this.setupKitchen();
     this.setupPlayer();
     this.setupInput();
+
+    // Test question loading
+    fetchQuestions({ count: 5, stationType: 'fridge' }).then(questions => {
+      console.log('TEST - Got questions during init:', questions);
+    });
   }
 
   private setupKitchen() {
@@ -60,6 +65,8 @@ export class GameEngine {
       
       const box = new Graphics();
       const color = STATION_COLORS[station.type] ?? 0xFFFFFF;
+
+      // Draw colored rectangle
       box.rect(
         station.collisionBox.x,
         station.collisionBox.y,
@@ -67,24 +74,52 @@ export class GameEngine {
         station.collisionBox.height,
       );
       box.fill(color);
+
+      // Add border for visibility
+      box.stroke({ width: 2, color: 0x000000 });
+
+      // Make interactive
+      this.makeStationInteractive(box, station);
+
       stationGroup.addChild(box);
 
-      // Add station label
+      // Add text label
       const style = new TextStyle({
-        fontFamily: 'Inter, system-ui, sans-serif',
-        fontSize: 11,
-        fill: 0x1D3557,
+        fontFamily: 'Arial',
+        fontSize: 12,
+        fill: 0x000000,
         fontWeight: 'bold',
         align: 'center',
       });
-      const label = new Text({ text: station.name, style });
+      const label = new Text({ text: station.type.toUpperCase(), style });
       label.anchor.set(0.5);
-      label.x = station.collisionBox.x + station.collisionBox.width / 2;
-      label.y = station.collisionBox.y + station.collisionBox.height / 2;
+      label.position.set(
+        station.collisionBox.x + station.collisionBox.width / 2,
+        station.collisionBox.y + station.collisionBox.height / 2
+      );
       stationGroup.addChild(label);
 
       this.app.stage.addChild(stationGroup);
     }
+  }
+
+  private makeStationInteractive(graphics: Graphics, station: Station) {
+    graphics.eventMode = 'static';
+    graphics.cursor = 'pointer';
+
+    graphics.on('pointerover', () => {
+      graphics.tint = 0xCCCCCC; // Highlight on hover
+    });
+
+    graphics.on('pointerout', () => {
+      graphics.tint = 0xFFFFFF; // Reset tint
+    });
+
+    graphics.on('pointerdown', (e) => {
+      e.stopPropagation(); // Prevent canvas click from firing
+      console.log('Station graphic clicked directly:', station.type);
+      this.onStationClick(station);
+    });
   }
 
   private setupPlayer() {
@@ -97,28 +132,36 @@ export class GameEngine {
   }
 
   private setupInput() {
-    const canvas = this.app.canvas as HTMLCanvasElement;
+    const canvas = this.app.canvas;
     canvas.addEventListener('click', (e: MouseEvent) => {
+      if (!this.player) return;
+
       const rect = canvas.getBoundingClientRect();
       const scaleX = 1280 / rect.width;
       const scaleY = 720 / rect.height;
       const x = (e.clientX - rect.left) * scaleX;
       const y = (e.clientY - rect.top) * scaleY;
 
-      // Check if clicking a station
+      console.log(`\n🖱️ Canvas clicked at (${Math.round(x)}, ${Math.round(y)})`);
+
+      // First, check if clicking a station
       const station = this.checkStationCollision(x, y);
       if (station) {
+        console.log(`🎯 Station clicked! Type: ${station.type}`);
         this.onStationClick(station);
-        return;
+        return; // Don't move player to the click point if it's a station
       }
 
       // Otherwise move player
-      this.player?.moveTo(x, y);
+      console.log('👟 Moving player to clicked location');
+      this.player.moveTo(x, y);
     });
   }
 
   private checkStationCollision(x: number, y: number): Station | null {
-    for (const station of KITCHEN_LAYOUT.stations) {
+    const stations = KITCHEN_LAYOUT.stations;
+
+    for (const station of stations) {
       const zone = station.interactionZone;
       if (
         x >= zone.x &&
@@ -126,6 +169,7 @@ export class GameEngine {
         y >= zone.y &&
         y <= zone.y + zone.height
       ) {
+        console.log(`✅ Hit station: ${station.type}`);
         return station;
       }
     }
@@ -133,10 +177,13 @@ export class GameEngine {
   }
 
   private async onStationClick(station: Station) {
-    console.log('Station clicked:', station.type, station.name);
+    console.log(`🎯 Station clicked: ${station.type} (${station.name})`);
 
     // Move player toward station
-    this.player?.moveTo(station.interactionZone.x + station.interactionZone.width / 2, station.interactionZone.y + station.interactionZone.height / 2);
+    this.player?.moveTo(
+      station.interactionZone.x + station.interactionZone.width / 2,
+      station.interactionZone.y + station.interactionZone.height / 2
+    );
 
     // Don't fetch for serving window (no questions there)
     if (station.type === 'serving') {
@@ -144,16 +191,25 @@ export class GameEngine {
       return;
     }
 
-    const questions = await fetchQuestions({
-      count: 1,
-      stationType: station.type,
-    });
+    try {
+      const questions = await fetchQuestions({
+        count: 1,
+        stationType: station.type,
+      });
 
-    if (questions.length > 0) {
-      console.log('Question loaded:', questions[0].stem);
-      useGameStore.getState().setActiveQuestion(questions[0]);
-    } else {
-      console.warn('No questions found for station:', station.type);
+      if (questions && questions.length > 0) {
+        console.log('📝 Question loaded:', questions[0].stem.substring(0, 50) + '...');
+
+        // Set in store
+        const { setActiveQuestion } = useGameStore.getState();
+        setActiveQuestion(questions[0]);
+
+        console.log('✅ Active question set in store');
+      } else {
+        console.error('❌ No questions returned for station:', station.type);
+      }
+    } catch (error) {
+      console.error('❌ Error loading question:', error);
     }
   }
 
