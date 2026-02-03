@@ -6,18 +6,35 @@ export class PlayerEntity {
   public position: { x: number; y: number };
   public targetPosition: { x: number; y: number } | null = null;
   public speed = 150; // pixels per second
+  private body: Graphics;
+  private hat: Graphics;
+  private animTimer = 0;
 
   constructor(id: string, startX: number, startY: number) {
     this.id = id;
     this.position = { x: startX, y: startY };
 
-    // Create simple circle sprite as placeholder
     this.sprite = new Container();
-    const circle = new Graphics();
-    circle.circle(0, 0, 16);
-    circle.fill(0x457B9D);
-    circle.stroke({ width: 2, color: 0x1D3557 });
-    this.sprite.addChild(circle);
+
+    // Body (Chef)
+    this.body = new Graphics();
+    this.body.rect(-12, -24, 24, 32);
+    this.body.fill(0x457B9D); // Blue apron
+    this.body.stroke({ width: 2, color: 0x1D3557 });
+
+    // Head
+    this.body.circle(0, -32, 10);
+    this.body.fill(0xF1FAEE);
+    this.body.stroke({ width: 2, color: 0x1D3557 });
+
+    // Chef Hat
+    this.hat = new Graphics();
+    this.hat.rect(-10, -50, 20, 12);
+    this.hat.fill(0xFFFFFF);
+    this.hat.stroke({ width: 2, color: 0x1D3557 });
+
+    this.sprite.addChild(this.body);
+    this.sprite.addChild(this.hat);
     this.sprite.position.set(startX, startY);
   }
 
@@ -26,7 +43,12 @@ export class PlayerEntity {
   }
 
   public update(deltaTime: number) {
-    if (!this.targetPosition) return;
+    if (!this.targetPosition) {
+      // Idle animation (gentle bobbing)
+      this.animTimer += deltaTime * 2;
+      this.sprite.y = this.position.y + Math.sin(this.animTimer) * 2;
+      return;
+    }
 
     const dx = this.targetPosition.x - this.position.x;
     const dy = this.targetPosition.y - this.position.y;
@@ -42,6 +64,10 @@ export class PlayerEntity {
       const moveDistance = this.speed * deltaTime;
       this.position.x += (dx / distance) * moveDistance;
       this.position.y += (dy / distance) * moveDistance;
+
+      // Walking animation (wobble)
+      this.animTimer += deltaTime * 10;
+      this.sprite.rotation = Math.sin(this.animTimer) * 0.1;
     }
 
     // Update sprite position

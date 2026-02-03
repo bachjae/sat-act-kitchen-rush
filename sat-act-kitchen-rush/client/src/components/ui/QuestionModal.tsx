@@ -1,27 +1,71 @@
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useGameStore } from '@store/gameStore';
+import { OrderSystem } from '@game/systems/OrderSystem';
+
+const STATION_TIMES: Record<string, number> = {
+  ticket: 10,
+  fridge: 25,
+  prep: 45,
+  stove: 90,
+  plating: 40,
+  serving: 0,
+};
 
 export function QuestionModal() {
   const { activeQuestion, setActiveQuestion, updateScore } = useGameStore();
   const [selectedChoice, setSelectedChoice] = useState<string | null>(null);
   const [showFeedback, setShowFeedback] = useState(false);
+  const [timeLeft, setTimeLeft] = useState(30);
+  const timerRef = useRef<any>(null);
 
-  console.log('🎨 QuestionModal render:', {
-    hasQuestion: !!activeQuestion,
-    questionId: activeQuestion?.id,
-    showFeedback,
-  });
+  useEffect(() => {
+    if (activeQuestion && !showFeedback) {
+      const time = STATION_TIMES[activeQuestion.stationType] || 30;
+      setTimeLeft(time);
+
+      timerRef.current = setInterval(() => {
+        setTimeLeft((prev) => {
+          if (prev <= 1) {
+            if (timerRef.current) clearInterval(timerRef.current);
+            setShowFeedback(true);
+            return 0;
+          }
+          return prev - 1;
+        });
+      }, 1000);
+    }
+
+    return () => {
+      if (timerRef.current) clearInterval(timerRef.current);
+    };
+  }, [activeQuestion, showFeedback]);
 
   if (!activeQuestion) {
-    console.log('⏸️ No active question, modal hidden');
     return null;
   }
 
   const handleSubmit = () => {
-    console.log('✅ Submit clicked, selected:', selectedChoice);
+    if (timerRef.current) clearInterval(timerRef.current);
     setShowFeedback(true);
-    if (selectedChoice === activeQuestion.correctChoiceId) {
-      updateScore(100);
+
+    const isCorrect = selectedChoice === activeQuestion.correctChoiceId;
+
+    if (isCorrect) {
+      // Points based on time remaining
+      const basePoints = 100;
+      const timeBonus = Math.floor(timeLeft * 2);
+      updateScore(basePoints + timeBonus);
+    }
+
+    // Advance orders that are waiting for this station
+    const { orders } = useGameStore.getState();
+    const activeOrder = orders.find(o =>
+      (o.status === 'pending' || o.status === 'in_progress') &&
+      o.steps.some(s => s.status === 'active' && s.stationType === activeQuestion.stationType)
+    );
+
+    if (activeOrder) {
+      OrderSystem.getInstance().advanceOrder(activeOrder.id, isCorrect);
     }
   };
 
@@ -41,13 +85,18 @@ export function QuestionModal() {
           {!showFeedback ? (
             <>
               {/* Question Header */}
-              <div className="mb-4">
-                <span className="inline-block px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm font-semibold mb-2">
-                  {activeQuestion.stationType.toUpperCase()} STATION
-                </span>
-                <h2 className="text-2xl font-bold text-gray-900 mt-2">
-                  {activeQuestion.stem}
-                </h2>
+              <div className="mb-4 flex justify-between items-start">
+                <div>
+                  <span className="inline-block px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm font-semibold mb-2">
+                    {activeQuestion.stationType.toUpperCase()} STATION
+                  </span>
+                  <h2 className="text-2xl font-bold text-gray-900 mt-2">
+                    {activeQuestion.stem}
+                  </h2>
+                </div>
+                <div className={`text-2xl font-mono font-bold ${timeLeft < 10 ? 'text-red-600 animate-pulse' : 'text-gray-700'}`}>
+                  {timeLeft}s
+                </div>
                 {activeQuestion.passage && (
                   <div className="mt-4 p-4 bg-gray-50 rounded-lg border border-gray-200">
                     <p className="text-sm text-gray-700 whitespace-pre-wrap">

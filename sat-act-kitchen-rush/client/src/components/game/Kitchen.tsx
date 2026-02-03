@@ -2,8 +2,16 @@ import { useEffect, useRef, useState } from 'react';
 import { Application } from 'pixi.js';
 import { GameEngine } from '@game/engine/GameEngine';
 import { QuestionModal } from '@components/ui/QuestionModal';
+import { HUD } from '@components/game/HUD';
+import { useGameStore } from '@store/gameStore';
 
 export function Kitchen() {
+  const setStatus = useGameStore((s) => s.setStatus);
+
+  useEffect(() => {
+    setStatus('playing');
+    return () => setStatus('idle');
+  }, [setStatus]);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const engineRef = useRef<GameEngine | null>(null);
   const appRef = useRef<Application | null>(null);
@@ -88,7 +96,8 @@ export function Kitchen() {
         }}
       />
 
-      {/* Question Modal - MUST be here */}
+      {/* HUD and Modal */}
+      <HUD />
       <QuestionModal />
     </div>
   );

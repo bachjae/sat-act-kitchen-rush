@@ -3,6 +3,7 @@ import { KITCHEN_LAYOUT } from '@game/config/kitchen-layout';
 import { PlayerEntity } from '@game/entities/PlayerEntity';
 import { useGameStore } from '@store/gameStore';
 import { fetchQuestions } from '@services/questions.service';
+import { OrderSystem } from '@game/systems/OrderSystem';
 import type { Station } from '@app-types/game.types';
 
 const STATION_COLORS: Record<string, number> = {
@@ -19,6 +20,7 @@ export class GameEngine {
   private running = false;
   private lastTime = 0;
   private player: PlayerEntity | null = null;
+  private stationGraphics: Map<string, Graphics> = new Map();
 
   constructor(app: Application) {
     this.app = app;
@@ -26,10 +28,9 @@ export class GameEngine {
     this.setupPlayer();
     this.setupInput();
 
-    // Test question loading
-    fetchQuestions({ count: 5, stationType: 'fridge' }).then(questions => {
-      console.log('TEST - Got questions during init:', questions);
-    });
+    // Initial order
+    const order = OrderSystem.getInstance().generateOrder();
+    useGameStore.getState().addOrder(order);
   }
 
   private setupKitchen() {
@@ -63,43 +64,91 @@ export class GameEngine {
     for (const station of KITCHEN_LAYOUT.stations) {
       const stationGroup = new Container();
       
-      const box = new Graphics();
+      const gfx = new Graphics();
       const color = STATION_COLORS[station.type] ?? 0xFFFFFF;
 
-      // Draw colored rectangle
-      box.rect(
+      // Base Countertop
+      gfx.rect(
         station.collisionBox.x,
-        station.collisionBox.y,
+        station.collisionBox.y + 20,
         station.collisionBox.width,
-        station.collisionBox.height,
+        station.collisionBox.height - 20
       );
-      box.fill(color);
+      gfx.fill(0x6C757D); // Gray counter
+      gfx.stroke({ width: 2, color: 0x1D3557 });
 
-      // Add border for visibility
-      box.stroke({ width: 2, color: 0x000000 });
+      // Station-specific top
+      gfx.rect(
+        station.collisionBox.x + 4,
+        station.collisionBox.y,
+        station.collisionBox.width - 8,
+        32
+      );
+      gfx.fill(color);
+      gfx.stroke({ width: 2, color: 0x1D3557 });
+
+      // Visual details based on type
+      this.addStationDetails(gfx, station);
 
       // Make interactive
-      this.makeStationInteractive(box, station);
+      this.makeStationInteractive(gfx, station);
+      this.stationGraphics.set(station.id, gfx);
 
-      stationGroup.addChild(box);
+      stationGroup.addChild(gfx);
 
-      // Add text label
+      // Add text label (above station)
       const style = new TextStyle({
         fontFamily: 'Arial',
-        fontSize: 12,
-        fill: 0x000000,
+        fontSize: 10,
+        fill: 0x1D3557,
         fontWeight: 'bold',
         align: 'center',
       });
-      const label = new Text({ text: station.type.toUpperCase(), style });
+      const label = new Text({ text: station.name, style });
       label.anchor.set(0.5);
       label.position.set(
         station.collisionBox.x + station.collisionBox.width / 2,
-        station.collisionBox.y + station.collisionBox.height / 2
+        station.collisionBox.y - 10
       );
       stationGroup.addChild(label);
 
       this.app.stage.addChild(stationGroup);
+    }
+  }
+
+  private addStationDetails(gfx: Graphics, station: Station) {
+    const { x, y, width } = station.collisionBox;
+    const centerX = x + width / 2;
+
+    switch (station.type) {
+      case 'ticket':
+        // Clipboard
+        gfx.rect(centerX - 10, y + 5, 20, 20);
+        gfx.fill(0xFFFFFF);
+        gfx.rect(centerX - 8, y + 10, 16, 2);
+        gfx.fill(0x000000);
+        break;
+      case 'fridge':
+        // Handle
+        gfx.rect(x + width - 15, y + 40, 4, 20);
+        gfx.fill(0x1D3557);
+        break;
+      case 'prep':
+        // Knife/Board
+        gfx.rect(centerX - 15, y + 25, 30, 5);
+        gfx.fill(0x8B5A3C);
+        break;
+      case 'stove':
+        // Burners
+        gfx.circle(centerX - 15, y + 16, 8);
+        gfx.circle(centerX + 15, y + 16, 8);
+        gfx.fill(0x333333);
+        break;
+      case 'plating':
+        // Plate
+        gfx.circle(centerX, y + 16, 12);
+        gfx.fill(0xFFFFFF);
+        break;
     }
   }
 
@@ -223,6 +272,29 @@ export class GameEngine {
     this.running = false;
   }
 
+  private checkProximity() {
+    if (!this.player) return;
+
+    const playerX = this.player.position.x;
+    const playerY = this.player.position.y;
+
+    for (const station of KITCHEN_LAYOUT.stations) {
+      const gfx = this.stationGraphics.get(station.id);
+      if (!gfx) continue;
+
+      const dx = playerX - (station.interactionZone.x + station.interactionZone.width / 2);
+      const dy = playerY - (station.interactionZone.y + station.interactionZone.height / 2);
+      const distance = Math.sqrt(dx * dx + dy * dy);
+
+      // Highlight if within 100 pixels
+      if (distance < 120) {
+        gfx.alpha = 0.8;
+      } else {
+        gfx.alpha = 1.0;
+      }
+    }
+  }
+
   private gameLoop = () => {
     if (!this.running) return;
 
@@ -232,6 +304,10 @@ export class GameEngine {
 
     // Update player movement
     this.player?.update(deltaTime);
+    this.checkProximity();
+
+    // Tick the game store
+    useGameStore.getState().tick(deltaTime);
 
     requestAnimationFrame(this.gameLoop);
   };
