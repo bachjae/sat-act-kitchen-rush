@@ -1,4 +1,4 @@
-import type { KitchenLayout, GridConfig, StationType, Position } from '@types/game.types';
+import type { KitchenLayout, GridConfig, StationType, Position } from '@app-types/game.types';
 
 export const GRID: GridConfig = {
   TILE_SIZE: 32,
@@ -49,9 +49,9 @@ export const KITCHEN_LAYOUT: KitchenLayout = {
       },
       interactionZone: {
         x: 96,
-        y: 256,
+        y: 160,
         width: 96,
-        height: 64,
+        height: 96,
       },
       sprite: {
         texture: 'ticket-board',
@@ -60,7 +60,6 @@ export const KITCHEN_LAYOUT: KitchenLayout = {
       },
       overlayAnchor: { x: 144, y: 160 },
     },
-
     {
       id: 'fridge',
       type: 'fridge' as StationType,
@@ -73,10 +72,10 @@ export const KITCHEN_LAYOUT: KitchenLayout = {
         height: 96,
       },
       interactionZone: {
-        x: 288,
-        y: 416,
-        width: 128,
-        height: 64,
+        x: 320,
+        y: 320,
+        width: 96,
+        height: 96,
       },
       sprite: {
         texture: 'fridge',
@@ -85,7 +84,6 @@ export const KITCHEN_LAYOUT: KitchenLayout = {
       },
       overlayAnchor: { x: 368, y: 320 },
     },
-
     {
       id: 'prep-station',
       type: 'prep' as StationType,
@@ -98,10 +96,10 @@ export const KITCHEN_LAYOUT: KitchenLayout = {
         height: 96,
       },
       interactionZone: {
-        x: 512,
-        y: 416,
-        width: 128,
-        height: 64,
+        x: 544,
+        y: 320,
+        width: 96,
+        height: 96,
       },
       sprite: {
         texture: 'prep-station',
@@ -110,7 +108,6 @@ export const KITCHEN_LAYOUT: KitchenLayout = {
       },
       overlayAnchor: { x: 592, y: 320 },
     },
-
     {
       id: 'stove',
       type: 'stove' as StationType,
@@ -123,10 +120,10 @@ export const KITCHEN_LAYOUT: KitchenLayout = {
         height: 96,
       },
       interactionZone: {
-        x: 736,
-        y: 416,
-        width: 128,
-        height: 64,
+        x: 768,
+        y: 320,
+        width: 96,
+        height: 96,
       },
       sprite: {
         texture: 'stove',
@@ -135,7 +132,6 @@ export const KITCHEN_LAYOUT: KitchenLayout = {
       },
       overlayAnchor: { x: 816, y: 320 },
     },
-
     {
       id: 'plating-station',
       type: 'plating' as StationType,
@@ -148,10 +144,10 @@ export const KITCHEN_LAYOUT: KitchenLayout = {
         height: 96,
       },
       interactionZone: {
-        x: 960,
-        y: 416,
-        width: 128,
-        height: 64,
+        x: 992,
+        y: 320,
+        width: 96,
+        height: 96,
       },
       sprite: {
         texture: 'plating-station',
@@ -160,7 +156,6 @@ export const KITCHEN_LAYOUT: KitchenLayout = {
       },
       overlayAnchor: { x: 1040, y: 320 },
     },
-
     {
       id: 'serving-window',
       type: 'serving' as StationType,
@@ -173,10 +168,10 @@ export const KITCHEN_LAYOUT: KitchenLayout = {
         height: 96,
       },
       interactionZone: {
-        x: 1120,
-        y: 256,
-        width: 96,
-        height: 64,
+        x: 1184,
+        y: 160,
+        width: 64,
+        height: 96,
       },
       sprite: {
         texture: 'serving-window',
