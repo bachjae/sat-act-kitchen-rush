@@ -3,23 +3,25 @@ import type { Question } from '@app-types/question.types';
 
 const USE_MOCK = import.meta.env.VITE_USE_MOCK_QUESTIONS !== 'false';
 
-export async function fetchQuestions(params: {
+interface FetchParams {
   count: number;
   skills?: string[];
   stationType?: string;
-}): Promise<Question[]> {
+}
+
+export async function fetchQuestions(params: FetchParams): Promise<Question[]> {
   console.log('📦 Fetching questions:', params);
 
   if (USE_MOCK) {
     console.log('✅ Using mock questions');
-    return filterAndShuffle(mockQuestions.questions as any[], params);
+    return filterAndShuffle(mockQuestions.questions as Question[], params);
   }
 
   console.warn('⚠️ Mock mode disabled, no questions available');
   return [];
 }
 
-function filterAndShuffle(questions: any[], params: any): Question[] {
+function filterAndShuffle(questions: Question[], params: FetchParams): Question[] {
   let filtered = [...questions];
 
   if (params.stationType) {
@@ -28,7 +30,8 @@ function filterAndShuffle(questions: any[], params: any): Question[] {
   }
 
   if (params.skills && params.skills.length > 0) {
-    filtered = filtered.filter(q => params.skills.includes(q.skillId));
+    const skills = params.skills;
+    filtered = filtered.filter(q => skills.includes(q.skillId));
   }
 
   // Shuffle

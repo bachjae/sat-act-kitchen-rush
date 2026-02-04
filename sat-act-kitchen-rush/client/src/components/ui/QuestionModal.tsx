@@ -1,10 +1,19 @@
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useGameStore } from '@store/gameStore';
+import { progressOrder } from '@game/systems/OrderSystem';
+import { AudioManager } from '@game/engine/AudioManager';
 
 export function QuestionModal() {
-  const { activeQuestion, setActiveQuestion, updateScore } = useGameStore();
+  const { activeQuestion, setActiveQuestion, updateScore, recordAttempt } = useGameStore();
   const [selectedChoice, setSelectedChoice] = useState<string | null>(null);
   const [showFeedback, setShowFeedback] = useState(false);
+  const startTimeRef = useRef<number>(0);
+
+  useEffect(() => {
+    if (activeQuestion && !showFeedback) {
+      startTimeRef.current = Date.now();
+    }
+  }, [activeQuestion, showFeedback]);
 
   console.log('🎨 QuestionModal render:', {
     hasQuestion: !!activeQuestion,
@@ -18,11 +27,34 @@ export function QuestionModal() {
   }
 
   const handleSubmit = () => {
+    if (!activeQuestion || !selectedChoice) return;
+
     console.log('✅ Submit clicked, selected:', selectedChoice);
+    const endTime = Date.now();
+    const timeTaken = (endTime - startTimeRef.current) / 1000;
+    const isCorrect = selectedChoice === activeQuestion.correctChoiceId;
+
+    recordAttempt({
+      questionId: activeQuestion.id,
+      stem: activeQuestion.stem,
+      userAnswer: selectedChoice,
+      correctAnswer: activeQuestion.correctChoiceId,
+      isCorrect,
+      timeTaken,
+      stationType: activeQuestion.stationType,
+      skillId: activeQuestion.skillId,
+    });
+
     setShowFeedback(true);
-    if (selectedChoice === activeQuestion.correctChoiceId) {
+    if (isCorrect) {
       updateScore(100);
+      AudioManager.getInstance().playSound('success');
+    } else {
+      AudioManager.getInstance().playSound('error');
     }
+
+    // Progress the order
+    progressOrder(activeQuestion.stationType, isCorrect);
   };
 
   const handleContinue = () => {

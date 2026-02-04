@@ -1,40 +1,14 @@
 export interface User {
-  id: string;
-  displayName: string;
-  email: string;
-  photoURL?: string;
-  authProvider: 'email' | 'google' | 'anonymous';
-  createdAt: Date;
-  lastLoginAt: Date;
-  stats: UserStats;
+  uid: string;
+  email?: string;
+  isAnonymous: boolean;
 }
 
-export interface UserStats {
-  totalSessions: number;
-  totalQuestionsAnswered: number;
-  totalCorrect: number;
-  averageAccuracy: number;
-  totalPlayTimeSeconds: number;
-  highScore: number;
-  streak: number;
-}
-
-export interface UserSkillMastery {
-  id: string;
+export interface UserProfile {
   userId: string;
-  skillId: string;
-  mastery: number;
-  totalAttempts: number;
-  correctAttempts: number;
-  lastAttemptAt: Date;
-  emaScore: number;
-}
-
-export interface Skill {
-  id: string;
-  examType: 'SAT' | 'ACT';
-  section: string;
-  contentDomain: string;
-  subskill: string;
-  description: string;
+  coins: number;
+  xp: number;
+  level: number;
+  totalSessions: number;
+  createdAt: string;
 }

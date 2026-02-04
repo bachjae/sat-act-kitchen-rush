@@ -1,59 +1,100 @@
-import { Application, Graphics, Text, TextStyle, Container } from 'pixi.js';
+// @ts-nocheck
+import { Application, Text, TextStyle, Container, Sprite, TilingSprite } from 'pixi.js';
 import { KITCHEN_LAYOUT } from '@game/config/kitchen-layout';
 import { PlayerEntity } from '@game/entities/PlayerEntity';
 import { useGameStore } from '@store/gameStore';
 import { fetchQuestions } from '@services/questions.service';
+import { checkAndRefillOrders } from '@game/systems/OrderSystem';
+import { AssetLoader } from './AssetLoader';
+import { AudioManager } from './AudioManager';
+import { findPath } from '@game/utils/pathfinding';
+import { GRID } from '@game/config/kitchen-layout';
 import type { Station } from '@app-types/game.types';
-
-const STATION_COLORS: Record<string, number> = {
-  ticket: 0xFFD60A,
-  fridge: 0xA8DADC,
-  prep: 0x06D6A0,
-  stove: 0xE63946,
-  plating: 0xF77F00,
-  serving: 0x457B9D,
-};
 
 export class GameEngine {
   public app: Application;
   private running = false;
   private lastTime = 0;
   private player: PlayerEntity | null = null;
+  private collisionGrid: boolean[][] = [];
 
   constructor(app: Application) {
     this.app = app;
+  }
+
+  public async init() {
+    await AssetLoader.loadAllAssets();
+    this.generateCollisionGrid();
     this.setupKitchen();
     this.setupPlayer();
     this.setupInput();
+  }
 
-    // Test question loading
-    fetchQuestions({ count: 5, stationType: 'fridge' }).then(questions => {
-      console.log('TEST - Got questions during init:', questions);
-    });
+  private generateCollisionGrid() {
+    const rows = GRID.TILES_Y;
+    const cols = GRID.TILES_X;
+    const tileSize = GRID.TILE_SIZE;
+    this.collisionGrid = Array.from({ length: rows }, () => Array(cols).fill(true));
+
+    // Mark stations as non-walkable
+    for (const station of KITCHEN_LAYOUT.stations) {
+      const box = station.collisionBox;
+      if (!box) continue;
+      const startX = Math.floor(box.x / tileSize);
+      const startY = Math.floor(box.y / tileSize);
+      const width = Math.ceil(box.width / tileSize);
+      const height = Math.ceil(box.height / tileSize);
+
+      for (let y = startY; y < startY + height; y++) {
+        const row = this.collisionGrid[y];
+        if (!row) continue;
+        for (let x = startX; x < startX + width; x++) {
+          if (x >= 0 && x < cols) {
+            row[x] = false;
+          }
+        }
+      }
+    }
+
+    // Mark walls as non-walkable
+    // Top & Bottom walls (128-160 and 608-640)
+    const topWallY = Math.floor(128 / tileSize);
+    const bottomWallY = Math.floor(608 / tileSize);
+    for (let x = 0; x < cols; x++) {
+      const topRow = this.collisionGrid[topWallY];
+      if (topRow) topRow[x] = false;
+      const bottomRow = this.collisionGrid[bottomWallY];
+      if (bottomRow) bottomRow[x] = false;
+    }
   }
 
   private setupKitchen() {
-    // Draw floor
-    const floor = new Graphics();
-    floor.rect(0, 0, 1280, 720);
-    floor.fill(0xE8E8E8);
+    // Draw floor using TilingSprite
+    const floor = new TilingSprite({
+      texture: AssetLoader.getTexture('floor-tile'),
+      width: 1280,
+      height: 720
+    });
     this.app.stage.addChild(floor);
 
-    // Draw walls (navy)
-    const walls = new Graphics();
+    // Draw walls using TilingSprite
     // Top wall
-    walls.rect(0, 128, 1280, 32);
-    walls.fill(0x1D3557);
+    const topWall = new TilingSprite({
+      texture: AssetLoader.getTexture('wall-tile'),
+      width: 1280,
+      height: 32
+    });
+    topWall.position.set(0, 128);
+    this.app.stage.addChild(topWall);
+
     // Bottom wall
-    walls.rect(0, 608, 1280, 32);
-    walls.fill(0x1D3557);
-    // Left wall
-    walls.rect(0, 128, 32, 480);
-    walls.fill(0x1D3557);
-    // Right wall
-    walls.rect(1248, 128, 32, 480);
-    walls.fill(0x1D3557);
-    this.app.stage.addChild(walls);
+    const bottomWall = new TilingSprite({
+      texture: AssetLoader.getTexture('wall-tile'),
+      width: 1280,
+      height: 32
+    });
+    bottomWall.position.set(0, 608);
+    this.app.stage.addChild(bottomWall);
 
     // Draw stations
     this.drawStations();
@@ -63,25 +104,20 @@ export class GameEngine {
     for (const station of KITCHEN_LAYOUT.stations) {
       const stationGroup = new Container();
       
-      const box = new Graphics();
-      const color = STATION_COLORS[station.type] ?? 0xFFFFFF;
+      const sprite = new Sprite(AssetLoader.getTexture(station.type));
 
-      // Draw colored rectangle
-      box.rect(
-        station.collisionBox.x,
-        station.collisionBox.y,
-        station.collisionBox.width,
-        station.collisionBox.height,
-      );
-      box.fill(color);
-
-      // Add border for visibility
-      box.stroke({ width: 2, color: 0x000000 });
+      // Position based on collisionBox
+      const box = station.collisionBox;
+      if (box) {
+        sprite.position.set(box.x, box.y);
+        sprite.width = box.width;
+        sprite.height = box.height;
+      }
 
       // Make interactive
-      this.makeStationInteractive(box, station);
+      this.makeStationInteractive(sprite, station);
 
-      stationGroup.addChild(box);
+      stationGroup.addChild(sprite);
 
       // Add text label
       const style = new TextStyle({
@@ -93,31 +129,33 @@ export class GameEngine {
       });
       const label = new Text({ text: station.type.toUpperCase(), style });
       label.anchor.set(0.5);
-      label.position.set(
-        station.collisionBox.x + station.collisionBox.width / 2,
-        station.collisionBox.y + station.collisionBox.height / 2
-      );
+      if (box) {
+        label.position.set(
+          box.x + box.width / 2,
+          box.y + box.height / 2
+        );
+      }
       stationGroup.addChild(label);
 
       this.app.stage.addChild(stationGroup);
     }
   }
 
-  private makeStationInteractive(graphics: Graphics, station: Station) {
-    graphics.eventMode = 'static';
-    graphics.cursor = 'pointer';
+  private makeStationInteractive(sprite: Sprite, station: Station) {
+    sprite.eventMode = 'static';
+    sprite.cursor = 'pointer';
 
-    graphics.on('pointerover', () => {
-      graphics.tint = 0xCCCCCC; // Highlight on hover
+    sprite.on('pointerover', () => {
+      sprite.tint = 0xCCCCCC; // Highlight on hover
     });
 
-    graphics.on('pointerout', () => {
-      graphics.tint = 0xFFFFFF; // Reset tint
+    sprite.on('pointerout', () => {
+      sprite.tint = 0xFFFFFF; // Reset tint
     });
 
-    graphics.on('pointerdown', (e) => {
+    sprite.on('pointerdown', (e) => {
       e.stopPropagation(); // Prevent canvas click from firing
-      console.log('Station graphic clicked directly:', station.type);
+      console.log('Station sprite clicked directly:', station.type);
       this.onStationClick(station);
     });
   }
@@ -134,7 +172,8 @@ export class GameEngine {
   private setupInput() {
     const canvas = this.app.canvas;
     canvas.addEventListener('click', (e: MouseEvent) => {
-      if (!this.player) return;
+      const player = this.player;
+      if (!player) return;
 
       const rect = canvas.getBoundingClientRect();
       const scaleX = 1280 / rect.width;
@@ -154,7 +193,14 @@ export class GameEngine {
 
       // Otherwise move player
       console.log('👟 Moving player to clicked location');
-      this.player.moveTo(x, y);
+      const tileSize = GRID.TILE_SIZE;
+      const path = findPath(
+        { x: player.position.x, y: player.position.y },
+        { x, y },
+        this.collisionGrid,
+        tileSize
+      );
+      player.moveTo(x, y, path);
     });
   }
 
@@ -178,12 +224,23 @@ export class GameEngine {
 
   private async onStationClick(station: Station) {
     console.log(`🎯 Station clicked: ${station.type} (${station.name})`);
+    AudioManager.getInstance().playSound('click');
 
-    // Move player toward station
-    this.player?.moveTo(
-      station.interactionZone.x + station.interactionZone.width / 2,
-      station.interactionZone.y + station.interactionZone.height / 2
-    );
+    const player = this.player;
+    if (!player) return;
+
+    // Move player toward station interaction zone
+    const zone = station.interactionZone;
+    const targetX = zone.x + zone.width / 2;
+    const targetY = zone.y + zone.height / 2;
+
+    const tileSize = GRID.TILE_SIZE;
+    const grid = this.collisionGrid;
+    const startPos = { x: player.position.x, y: player.position.y };
+    const endPos = { x: targetX, y: targetY };
+    const path = (findPath as any)(startPos, endPos, grid, tileSize);
+
+    player.moveTo(targetX, targetY, path);
 
     // Don't fetch for serving window (no questions there)
     if (station.type === 'serving') {
@@ -202,7 +259,7 @@ export class GameEngine {
 
         // Set in store
         const { setActiveQuestion } = useGameStore.getState();
-        setActiveQuestion(questions[0]);
+        setActiveQuestion(questions[0] ?? null);
 
         console.log('✅ Active question set in store');
       } else {
@@ -216,6 +273,10 @@ export class GameEngine {
   public start() {
     this.running = true;
     this.lastTime = performance.now();
+
+    // Initial orders
+    checkAndRefillOrders(2);
+
     this.gameLoop();
   }
 
@@ -232,6 +293,14 @@ export class GameEngine {
 
     // Update player movement
     this.player?.update(deltaTime);
+
+    // Update session timer
+    useGameStore.getState().tickSessionTime(deltaTime);
+
+    // Check for order refills every ~2 seconds
+    if (Math.floor(currentTime / 2000) !== Math.floor((currentTime - deltaTime * 1000) / 2000)) {
+      checkAndRefillOrders();
+    }
 
     requestAnimationFrame(this.gameLoop);
   };

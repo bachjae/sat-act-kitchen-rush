@@ -2,8 +2,12 @@ import { useEffect, useRef, useState } from 'react';
 import { Application } from 'pixi.js';
 import { GameEngine } from '@game/engine/GameEngine';
 import { QuestionModal } from '@components/ui/QuestionModal';
+import { useGameStore } from '@store/gameStore';
+import { RecapScreen } from '@components/ui/RecapScreen';
+import { HUD } from '@components/ui/HUD';
 
 export function Kitchen() {
+  const status = useGameStore(state => state.status);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const engineRef = useRef<GameEngine | null>(null);
   const appRef = useRef<Application | null>(null);
@@ -38,6 +42,7 @@ export function Kitchen() {
 
         appRef.current = app;
         const engine = new GameEngine(app);
+        await engine.init();
         engineRef.current = engine;
         engine.start();
 
@@ -88,8 +93,14 @@ export function Kitchen() {
         }}
       />
 
+      {/* HUD Overlay */}
+      <HUD />
+
       {/* Question Modal - MUST be here */}
       <QuestionModal />
+
+      {/* Recap Screen */}
+      {status === 'ended' && <RecapScreen />}
     </div>
   );
 }
