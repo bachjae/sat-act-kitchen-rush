@@ -1,28 +1,41 @@
-import { Container, Graphics } from 'pixi.js';
+import { Container, Sprite } from 'pixi.js';
+import { AssetLoader } from '@game/engine/AssetLoader';
+
+import type { Point } from '@game/utils/pathfinding';
 
 export class PlayerEntity {
   public id: string;
   public sprite: Container;
   public position: { x: number; y: number };
   public targetPosition: { x: number; y: number } | null = null;
+  public waypoints: Point[] = [];
+  public currentWaypointIndex = 0;
   public speed = 150; // pixels per second
 
   constructor(id: string, startX: number, startY: number) {
     this.id = id;
     this.position = { x: startX, y: startY };
 
-    // Create simple circle sprite as placeholder
     this.sprite = new Container();
-    const circle = new Graphics();
-    circle.circle(0, 0, 16);
-    circle.fill(0x457B9D);
-    circle.stroke({ width: 2, color: 0x1D3557 });
-    this.sprite.addChild(circle);
+
+    // Use Sprite from AssetLoader
+    const playerSprite = new Sprite(AssetLoader.getTexture('player-chef'));
+    playerSprite.anchor.set(0.5, 0.8); // Center horizontally, near bottom vertically
+    playerSprite.scale.set(0.5); // Adjust scale if needed
+
+    this.sprite.addChild(playerSprite);
     this.sprite.position.set(startX, startY);
   }
 
-  public moveTo(x: number, y: number) {
-    this.targetPosition = { x, y };
+  public moveTo(x: number, y: number, path?: Point[]) {
+    if (path && path.length > 0) {
+      this.waypoints = path;
+      this.currentWaypointIndex = 0;
+      this.targetPosition = path[0] ?? null;
+    } else {
+      this.targetPosition = { x, y };
+      this.waypoints = [];
+    }
   }
 
   public update(deltaTime: number) {
@@ -32,11 +45,18 @@ export class PlayerEntity {
     const dy = this.targetPosition.y - this.position.y;
     const distance = Math.sqrt(dx * dx + dy * dy);
 
-    if (distance < 2) {
-      // Snap to target
-      this.position.x = this.targetPosition.x;
-      this.position.y = this.targetPosition.y;
-      this.targetPosition = null;
+    if (distance < 4) {
+      // Reached target or waypoint
+      if (this.waypoints.length > 0 && this.currentWaypointIndex < this.waypoints.length - 1) {
+        this.currentWaypointIndex++;
+        this.targetPosition = this.waypoints[this.currentWaypointIndex] ?? null;
+      } else {
+        // Reached final destination
+        this.position.x = this.targetPosition.x;
+        this.position.y = this.targetPosition.y;
+        this.targetPosition = null;
+        this.waypoints = [];
+      }
     } else {
       // Move toward target
       const moveDistance = this.speed * deltaTime;

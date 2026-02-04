@@ -66,3 +66,32 @@ export interface GridConfig {
   TILES_X: number;
   TILES_Y: number;
 }
+
+export interface QuestionAttempt {
+  questionId: string;
+  stem: string;
+  userAnswer: string;
+  correctAnswer: string;
+  isCorrect: boolean;
+  timeTaken: number;
+  stationType: StationType;
+  skillId: string;
+}
+
+export interface StationStat {
+  attempted: number;
+  correct: number;
+  totalTime: number;
+}
+
+export interface SessionStats {
+  totalOrdersGenerated: number;
+  totalOrdersCompleted: number;
+  totalOrdersFailed: number;
+  totalQuestionsAttempted: number;
+  totalCorrectAnswers: number;
+  totalCoinsEarned: number;
+  totalXpEarned: number;
+  stationBreakdown: Record<StationType, StationStat>;
+  questionReview: QuestionAttempt[];
+}
