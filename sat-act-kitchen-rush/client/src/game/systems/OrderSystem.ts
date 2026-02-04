@@ -1,5 +1,6 @@
 import { useGameStore } from '@store/gameStore';
 import type { Order, StationType, OrderStep } from '@app-types/game.types';
+import mockQuestions from '@data/mock-questions.json';
 
 const DISH_NAMES = [
   'Comma Curry',
@@ -21,14 +22,20 @@ export class OrderSystem {
     return OrderSystem.instance;
   }
 
+  private getRandomQuestionForStation(type: StationType): string {
+    const questions = mockQuestions.questions.filter((q: any) => q.stationType === type);
+    if (questions.length === 0) return 'q-placeholder';
+    return questions[Math.floor(Math.random() * questions.length)].id;
+  }
+
   public generateOrder(): Order {
     const id = Math.random().toString(36).substring(7);
     const dishName = DISH_NAMES[Math.floor(Math.random() * DISH_NAMES.length)];
 
     const steps: OrderStep[] = STEPS.map((type, index) => ({
       stationType: type,
-      questionId: '', // Will be filled when active
-      status: index === 0 ? 'active' : 'locked',
+      questionId: this.getRandomQuestionForStation(type),
+      status: index === 0 ? (index === 0 ? 'active' : 'locked') : 'locked',
     }));
 
     return {

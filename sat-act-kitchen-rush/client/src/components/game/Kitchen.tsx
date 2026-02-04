@@ -6,12 +6,13 @@ import { HUD } from '@components/game/HUD';
 import { useGameStore } from '@store/gameStore';
 
 export function Kitchen() {
+  const startSession = useGameStore((s) => s.startSession);
   const setStatus = useGameStore((s) => s.setStatus);
 
   useEffect(() => {
-    setStatus('playing');
+    startSession();
     return () => setStatus('idle');
-  }, [setStatus]);
+  }, [startSession, setStatus]);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const engineRef = useRef<GameEngine | null>(null);
   const appRef = useRef<Application | null>(null);

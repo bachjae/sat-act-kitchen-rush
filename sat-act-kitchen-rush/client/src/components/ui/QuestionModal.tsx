@@ -1,6 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
 import { useGameStore } from '@store/gameStore';
-import { OrderSystem } from '@game/systems/OrderSystem';
 
 const STATION_TIMES: Record<string, number> = {
   ticket: 10,
@@ -12,7 +11,7 @@ const STATION_TIMES: Record<string, number> = {
 };
 
 export function QuestionModal() {
-  const { activeQuestion, setActiveQuestion, updateScore } = useGameStore();
+  const { activeQuestion, setActiveQuestion, updateScore, completeOrderStep } = useGameStore();
   const [selectedChoice, setSelectedChoice] = useState<string | null>(null);
   const [showFeedback, setShowFeedback] = useState(false);
   const [timeLeft, setTimeLeft] = useState(30);
@@ -58,15 +57,7 @@ export function QuestionModal() {
     }
 
     // Advance orders that are waiting for this station
-    const { orders } = useGameStore.getState();
-    const activeOrder = orders.find(o =>
-      (o.status === 'pending' || o.status === 'in_progress') &&
-      o.steps.some(s => s.status === 'active' && s.stationType === activeQuestion.stationType)
-    );
-
-    if (activeOrder) {
-      OrderSystem.getInstance().advanceOrder(activeOrder.id, isCorrect);
-    }
+    completeOrderStep(activeQuestion.stationType, isCorrect);
   };
 
   const handleContinue = () => {
