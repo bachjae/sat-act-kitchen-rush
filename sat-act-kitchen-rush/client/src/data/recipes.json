@@ -1,0 +1,83 @@
+{
+  "recipes": [
+    {
+      "id": "recipe-001",
+      "name": "Classic Burger",
+      "description": "Juicy beef burger with all the fixings",
+      "difficulty": 2,
+      "stations": ["fridge", "prep", "stove", "plating"],
+      "ingredients": [
+        { "name": "Beef Patty", "station": "fridge" },
+        { "name": "Lettuce", "station": "fridge" },
+        { "name": "Tomato", "station": "fridge" },
+        { "name": "Slice Bun", "station": "prep" },
+        { "name": "Cook Patty", "station": "stove" },
+        { "name": "Assemble Burger", "station": "plating" }
+      ],
+      "estimatedTime": 180
+    },
+    {
+      "id": "recipe-002",
+      "name": "Caesar Salad",
+      "description": "Fresh romaine with parmesan and croutons",
+      "difficulty": 1,
+      "stations": ["fridge", "prep", "plating"],
+      "ingredients": [
+        { "name": "Romaine Lettuce", "station": "fridge" },
+        { "name": "Parmesan Cheese", "station": "fridge" },
+        { "name": "Chop Lettuce", "station": "prep" },
+        { "name": "Add Dressing & Garnish", "station": "plating" }
+      ],
+      "estimatedTime": 120
+    },
+    {
+      "id": "recipe-003",
+      "name": "Spaghetti Carbonara",
+      "description": "Creamy pasta with bacon and egg",
+      "difficulty": 3,
+      "stations": ["fridge", "prep", "stove", "plating"],
+      "ingredients": [
+        { "name": "Pasta", "station": "fridge" },
+        { "name": "Bacon", "station": "fridge" },
+        { "name": "Eggs", "station": "fridge" },
+        { "name": "Dice Bacon", "station": "prep" },
+        { "name": "Boil Pasta", "station": "stove" },
+        { "name": "Cook Bacon", "station": "stove" },
+        { "name": "Toss & Plate", "station": "plating" }
+      ],
+      "estimatedTime": 200
+    },
+    {
+      "id": "recipe-004",
+      "name": "Grilled Chicken",
+      "description": "Seasoned chicken breast with vegetables",
+      "difficulty": 2,
+      "stations": ["fridge", "prep", "stove", "plating"],
+      "ingredients": [
+        { "name": "Chicken Breast", "station": "fridge" },
+        { "name": "Bell Peppers", "station": "fridge" },
+        { "name": "Season Chicken", "station": "prep" },
+        { "name": "Chop Vegetables", "station": "prep" },
+        { "name": "Grill Chicken", "station": "stove" },
+        { "name": "Plate & Garnish", "station": "plating" }
+      ],
+      "estimatedTime": 180
+    },
+    {
+      "id": "recipe-005",
+      "name": "Fish Tacos",
+      "description": "Crispy fish with fresh slaw",
+      "difficulty": 2,
+      "stations": ["fridge", "prep", "stove", "plating"],
+      "ingredients": [
+        { "name": "Fish Fillets", "station": "fridge" },
+        { "name": "Cabbage", "station": "fridge" },
+        { "name": "Tortillas", "station": "fridge" },
+        { "name": "Make Slaw", "station": "prep" },
+        { "name": "Fry Fish", "station": "stove" },
+        { "name": "Assemble Tacos", "station": "plating" }
+      ],
+      "estimatedTime": 150
+    }
+  ]
+}

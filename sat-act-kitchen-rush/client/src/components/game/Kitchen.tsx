@@ -2,6 +2,9 @@ import { useEffect, useRef, useState } from 'react';
 import { Application } from 'pixi.js';
 import { GameEngine } from '@game/engine/GameEngine';
 import { QuestionModal } from '@components/ui/QuestionModal';
+import { RecipeTicketModal } from '@components/ui/RecipeTicketModal';
+import { FridgeMechanic, PrepMechanic, StoveMechanic, PlatingMechanic } from '@components/mechanics';
+import { useGameStore } from '@store/gameStore';
 
 export function Kitchen() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -38,6 +41,13 @@ export function Kitchen() {
 
         appRef.current = app;
         const engine = new GameEngine(app);
+        await engine.init();
+
+        if (!mounted) {
+          app.destroy();
+          return;
+        }
+
         engineRef.current = engine;
         engine.start();
 
@@ -78,6 +88,23 @@ export function Kitchen() {
     );
   }
 
+  const { activeMechanic, activeStation, setActiveMechanic, updateScore } = useGameStore();
+
+  const handleMechanicComplete = async (success: boolean) => {
+    console.log(`🎮 Mechanic complete: ${success ? 'SUCCESS' : 'FAIL'}`);
+    setActiveMechanic(null);
+
+    if (success) {
+      updateScore(50); // Bonus for completing mechanic
+
+      // After successful mechanic, show a question
+      if (engineRef.current && activeStation) {
+        console.log(`📝 Showing question after mechanic for ${activeStation}`);
+        await engineRef.current.showQuestionForStation(activeStation);
+      }
+    }
+  };
+
   return (
     <div className="relative w-full h-screen flex items-center justify-center bg-gray-900">
       <canvas
@@ -88,7 +115,24 @@ export function Kitchen() {
         }}
       />
 
-      {/* Question Modal - MUST be here */}
+      {/* Recipe Ticket Modal - shows when picking up an order */}
+      <RecipeTicketModal />
+
+      {/* Station Mechanics */}
+      {activeMechanic === 'fridge' && (
+        <FridgeMechanic onComplete={handleMechanicComplete} />
+      )}
+      {activeMechanic === 'prep' && (
+        <PrepMechanic onComplete={handleMechanicComplete} />
+      )}
+      {activeMechanic === 'stove' && (
+        <StoveMechanic onComplete={handleMechanicComplete} />
+      )}
+      {activeMechanic === 'plating' && (
+        <PlatingMechanic onComplete={handleMechanicComplete} />
+      )}
+
+      {/* Question Modal - shows when at question stations */}
       <QuestionModal />
     </div>
   );

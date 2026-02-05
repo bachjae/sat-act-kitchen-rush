@@ -18,10 +18,16 @@ export function QuestionModal() {
   }
 
   const handleSubmit = () => {
-    console.log('✅ Submit clicked, selected:', selectedChoice);
+    console.log('Submit clicked, selected:', selectedChoice);
     setShowFeedback(true);
     if (selectedChoice === activeQuestion.correctChoiceId) {
       updateScore(100);
+      // Advance the active order step
+      const orders = useGameStore.getState().orders;
+      const activeOrder = orders.find(o => o.status === 'in_progress');
+      if (activeOrder) {
+        useGameStore.getState().advanceOrderStep(activeOrder.id);
+      }
     }
   };
 

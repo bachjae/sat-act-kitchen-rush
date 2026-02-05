@@ -15,7 +15,23 @@
       "Bash(timeout 12 npx vite:*)",
       "Bash(npx playwright:*)",
       "Bash(npx vite --port 3000)",
-      "Bash(curl:*)"
+      "Bash(curl:*)",
+      "Bash(git -C \"c:\\\\Users\\\\tsuom\\\\OneDrive\\\\Desktop\\\\SAC Prep\" log --oneline -10)",
+      "Bash(npm run dev:*)",
+      "Bash(git clone:*)",
+      "Bash(npm run build:*)",
+      "Bash(ls -la \"C:\\\\Users\\\\tsuom\\\\.claude\"\" 2>nul || echo \"Directory not found or empty \")",
+      "Bash(dir:*)",
+      "Bash(findstr:*)",
+      "Bash(test:*)",
+      "Bash(tree:*)",
+      "mcp__mcp-pixel-paint__create_canvas",
+      "mcp__mcp-pixel-paint__draw_rectangle",
+      "mcp__mcp-pixel-paint__set_pixel",
+      "mcp__mcp-pixel-paint__draw_line",
+      "mcp__mcp-pixel-paint__save_image",
+      "Bash(timeout:*)",
+      "mcp__mcp-pixel-paint__clear_canvas"
     ]
   }
 }
