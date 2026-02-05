@@ -2,3 +2,8 @@ export { FridgeMechanic } from './FridgeMechanic';
 export { PrepMechanic } from './PrepMechanic';
 export { StoveMechanic } from './StoveMechanic';
 export { PlatingMechanic } from './PlatingMechanic';
+export { GrillMechanic } from './GrillMechanic';
+export { FryMechanic } from './FryMechanic';
+export { OvenMechanic } from './OvenMechanic';
+export { DrinkMechanic } from './DrinkMechanic';
+export { DessertMechanic } from './DessertMechanic';

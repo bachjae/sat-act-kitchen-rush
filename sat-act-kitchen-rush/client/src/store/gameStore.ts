@@ -12,10 +12,13 @@ export interface Recipe {
   estimatedTime: number;
 }
 
-export type MechanicType = 'fridge' | 'prep' | 'stove' | 'plating' | null;
+export type MechanicType = 'fridge' | 'prep' | 'stove' | 'grill' | 'fry' | 'oven' | 'plating' | 'dessert' | 'drinks' | null;
 
 interface GameState {
   status: 'idle' | 'loading' | 'playing' | 'paused' | 'ended';
+  view: 'main-menu' | 'mode-select' | 'skill-select' | 'playing' | 'settings' | 'recap';
+  gameMode: 'session' | 'zen' | null;
+  selectedSkill: string | 'all';
   sessionId: string | null;
   activeQuestion: Question | null;
   activeRecipe: Recipe | null;
@@ -23,10 +26,14 @@ interface GameState {
   activeMechanic: MechanicType;
   currentStepIndex: number;
   orders: Order[];
+  inventory: string[];
   score: number;
   coinsEarned: number;
 
   setStatus: (status: GameState['status']) => void;
+  setView: (view: GameState['view']) => void;
+  setGameMode: (mode: GameState['gameMode']) => void;
+  setSelectedSkill: (skill: string) => void;
   setActiveQuestion: (question: Question | null) => void;
   setActiveRecipe: (recipe: Recipe | null) => void;
   setActiveStation: (station: StationType | null) => void;
@@ -38,10 +45,17 @@ interface GameState {
   completeOrder: (orderId: string) => void;
   advanceOrderStep: (orderId: string) => void;
   updateScore: (points: number) => void;
+  addToInventory: (item: string) => void;
+  removeFromInventory: (item: string) => void;
+  clearInventory: () => void;
+  updateOrderTimers: (deltaTime: number) => void;
 }
 
 export const useGameStore = create<GameState>((set) => ({
   status: 'idle',
+  view: 'main-menu',
+  gameMode: null,
+  selectedSkill: 'all',
   sessionId: null,
   activeQuestion: null,
   activeRecipe: null,
@@ -49,10 +63,14 @@ export const useGameStore = create<GameState>((set) => ({
   activeMechanic: null,
   currentStepIndex: 0,
   orders: [],
+  inventory: [],
   score: 0,
   coinsEarned: 0,
 
   setStatus: (status) => set({ status }),
+  setView: (view) => set({ view }),
+  setGameMode: (mode) => set({ gameMode: mode }),
+  setSelectedSkill: (skill) => set({ selectedSkill: skill }),
   setActiveQuestion: (question) => set({ activeQuestion: question }),
   setActiveRecipe: (recipe) => set({ activeRecipe: recipe, currentStepIndex: 0 }),
   setActiveStation: (station) => set({ activeStation: station }),
@@ -93,4 +111,24 @@ export const useGameStore = create<GameState>((set) => ({
     })),
 
   updateScore: (points) => set((state) => ({ score: state.score + points })),
+
+  addToInventory: (item) => set((state) => ({
+    inventory: [...state.inventory, item].slice(-9)
+  })),
+
+  removeFromInventory: (item) => set((state) => ({
+    inventory: state.inventory.filter((i, index) =>
+      index !== state.inventory.indexOf(item)
+    )
+  })),
+
+  clearInventory: () => set({ inventory: [] }),
+
+  updateOrderTimers: (deltaTime) => set((state) => ({
+    orders: state.orders.map((order) => {
+      if (order.status !== 'in_progress') return order;
+      const newTime = Math.max(0, order.timeRemaining - deltaTime);
+      return { ...order, timeRemaining: newTime };
+    })
+  })),
 }));

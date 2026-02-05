@@ -1,160 +1,116 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
+import { useGameStore } from '@store/gameStore';
 
 interface PrepMechanicProps {
   onComplete: (success: boolean) => void;
 }
 
 export function PrepMechanic({ onComplete }: PrepMechanicProps) {
+  const { inventory, addToInventory, removeFromInventory, setActiveMechanic } = useGameStore();
   const [chops, setChops] = useState(0);
-  const [targetChops] = useState(() => Math.floor(Math.random() * 5) + 8); // 8-12 chops
-  const [timeLeft, setTimeLeft] = useState(10);
+  const [targetChops] = useState(8);
+  const [timeLeft, setTimeLeft] = useState(20);
   const [gameOver, setGameOver] = useState(false);
-  const [knife, setKnife] = useState({ x: 50, chopping: false });
+  const [knife, setKnife] = useState({ chopping: false });
+  const [onBoard, setOnBoard] = useState<string | null>(null);
+  const [dragItem, setDragItem] = useState<string | null>(null);
+  const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
+  const boardRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (gameOver) return;
-
     const timer = setInterval(() => {
       setTimeLeft(t => {
         if (t <= 1) {
           setGameOver(true);
-          clearInterval(timer);
-          onComplete(chops >= targetChops);
+          onComplete(false);
           return 0;
         }
         return t - 1;
       });
     }, 1000);
-
     return () => clearInterval(timer);
-  }, [gameOver, chops, targetChops, onComplete]);
+  }, [gameOver, onComplete]);
 
   const handleChop = useCallback(() => {
-    if (gameOver) return;
-
-    setKnife(k => ({ ...k, chopping: true }));
+    if (gameOver || !onBoard) return;
+    setKnife({ chopping: true });
     setChops(c => {
       const newChops = c + 1;
       if (newChops >= targetChops) {
         setGameOver(true);
-        setTimeout(() => onComplete(true), 300);
+        removeFromInventory(onBoard);
+        addToInventory(`sliced-${onBoard}`);
+        setTimeout(() => onComplete(true), 500);
       }
       return newChops;
     });
+    setTimeout(() => setKnife({ chopping: false }), 100);
+  }, [gameOver, onBoard, targetChops, onComplete, removeFromInventory, addToInventory]);
 
-    // Reset animation
-    setTimeout(() => {
-      setKnife(k => ({ ...k, chopping: false }));
-    }, 100);
-  }, [gameOver, targetChops, onComplete]);
+  const handleMouseDown = (item: string, e: React.MouseEvent) => {
+    setDragItem(item);
+    setMousePos({ x: e.clientX, y: e.clientY });
+  };
 
-  // Keyboard support
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.code === 'Space' || e.code === 'Enter') {
-        e.preventDefault();
-        handleChop();
+  const handleMouseMove = (e: React.MouseEvent) => { if (dragItem) setMousePos({ x: e.clientX, y: e.clientY }); };
+
+  const handleMouseUp = (e: React.MouseEvent) => {
+    if (dragItem && boardRef.current) {
+      const rect = boardRef.current.getBoundingClientRect();
+      if (e.clientX >= rect.left && e.clientX <= rect.right && e.clientY >= rect.top && e.clientY <= rect.bottom) {
+        setOnBoard(dragItem);
       }
-    };
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [handleChop]);
+    }
+    setDragItem(null);
+  };
 
-  const progress = Math.min((chops / targetChops) * 100, 100);
+  const getEmoji = (item: string) => {
+    if (item.includes('lettuce')) return '🥬';
+    if (item.includes('tomato')) return '🍅';
+    if (item.includes('beef')) return '🥩';
+    if (item.includes('cheese')) return '🧀';
+    return '🥕';
+  };
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-50">
-      <div className="bg-green-50 rounded-xl shadow-2xl max-w-md w-full mx-4 overflow-hidden">
-        {/* Header */}
-        <div className="bg-green-600 text-white px-6 py-4">
-          <div className="flex justify-between items-center">
-            <h2 className="text-xl font-bold flex items-center gap-2">
-              <span>🔪</span> Prep Station
-            </h2>
-            <div className={`px-3 py-1 rounded-full font-mono text-lg ${
-              timeLeft <= 3 ? 'bg-red-500 animate-pulse' : 'bg-green-700'
-            }`}>
-              {timeLeft}s
+    <div className="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-50 select-none" onMouseMove={handleMouseMove} onMouseUp={handleMouseUp}>
+      <div className="bg-green-50 rounded-xl shadow-2xl max-w-2xl w-full mx-4 overflow-hidden relative border-4 border-green-600">
+        <button onClick={() => setActiveMechanic(null)} className="absolute top-2 right-2 w-8 h-8 flex items-center justify-center rounded-full bg-green-800 bg-opacity-20 text-green-900 hover:bg-red-500 hover:text-white transition-colors z-10">✕</button>
+        <div className="bg-green-600 text-white px-6 py-4 flex justify-between items-center">
+          <h2 className="text-xl font-bold flex items-center gap-2"><span>🔪</span> Prep Station</h2>
+          <div className={`px-3 py-1 rounded-full font-mono text-lg ${timeLeft <= 5 ? 'bg-red-500 animate-pulse' : 'bg-green-700'}`}>{timeLeft}s</div>
+        </div>
+        <div className="flex">
+          <div className="w-40 bg-green-100 p-4 border-r border-green-200 min-h-[300px]">
+            <h3 className="text-[10px] font-bold text-green-800 mb-3 uppercase tracking-widest">Ingredients</h3>
+            <div className="grid grid-cols-2 gap-2">
+              {inventory.filter(i => !i.startsWith('sliced-')).map((item, idx) => (
+                <div key={idx} onMouseDown={(e) => handleMouseDown(item, e)} className="w-12 h-12 bg-white rounded-lg shadow flex items-center justify-center text-2xl cursor-grab active:cursor-grabbing hover:scale-105 transition-transform">{getEmoji(item)}</div>
+              ))}
             </div>
           </div>
-        </div>
-
-        {/* Instructions */}
-        <div className="px-6 py-3 bg-green-100 border-b border-green-200">
-          <p className="text-green-800 font-medium text-center">
-            Click or press SPACE to chop! Get {targetChops} chops!
-          </p>
-        </div>
-
-        {/* Chopping Area */}
-        <div className="p-6">
-          <div className="relative h-48 bg-amber-100 rounded-xl border-4 border-amber-300 overflow-hidden">
-            {/* Cutting Board */}
-            <div className="absolute inset-4 bg-amber-200 rounded-lg border-2 border-amber-400 flex items-center justify-center">
-              {/* Vegetable */}
-              <div className="text-6xl">🥬</div>
-
-              {/* Chop marks */}
+          <div className="flex-1 p-6">
+            <p className="text-green-800 font-medium text-center mb-4">{!onBoard ? 'Drag an ingredient to the board!' : 'Click the board to chop!'}</p>
+            <div ref={boardRef} onClick={handleChop} className={`relative h-48 bg-amber-100 rounded-xl border-4 transition-colors ${onBoard ? 'border-amber-400 cursor-pointer' : 'border-dashed border-green-300'}`}>
               <div className="absolute inset-0 flex items-center justify-center">
-                {Array.from({ length: Math.min(chops, 12) }).map((_, i) => (
-                  <div
-                    key={i}
-                    className="absolute w-0.5 h-16 bg-amber-600 opacity-30"
-                    style={{
-                      left: `${20 + (i * 5)}%`,
-                      transform: 'rotate(-5deg)',
-                    }}
-                  />
-                ))}
+                {onBoard ? (
+                  <div className="relative">
+                    <div className="text-7xl">{getEmoji(onBoard)}</div>
+                    <div className="absolute inset-0 flex items-center justify-center">
+                      {Array.from({ length: chops }).map((_, i) => (
+                        <div key={i} className="absolute w-1 h-20 bg-black opacity-20" style={{ left: `${20 + (i * 10)}%`, transform: 'rotate(15deg)' }} />
+                      ))}
+                    </div>
+                  </div>
+                ) : <div className="text-green-300 font-black text-2xl opacity-20 uppercase italic">Cutting Board</div>}
               </div>
-            </div>
-
-            {/* Knife */}
-            <div
-              className={`absolute text-5xl transition-transform duration-75 ${
-                knife.chopping ? 'translate-y-4' : '-translate-y-2'
-              }`}
-              style={{
-                left: '50%',
-                top: '20%',
-                transform: `translateX(-50%) rotate(-45deg) ${knife.chopping ? 'translateY(1rem)' : ''}`,
-              }}
-            >
-              🔪
-            </div>
-          </div>
-
-          {/* Click Area */}
-          <button
-            onClick={handleChop}
-            disabled={gameOver}
-            className={`
-              w-full mt-4 py-6 rounded-xl font-bold text-xl transition-all
-              ${gameOver
-                ? 'bg-gray-300 text-gray-500'
-                : 'bg-green-500 hover:bg-green-600 active:bg-green-700 text-white active:scale-95'
-              }
-            `}
-          >
-            {gameOver
-              ? chops >= targetChops ? '✅ Perfect Chop!' : '❌ Not Enough!'
-              : `CHOP! (${chops}/${targetChops})`
-            }
-          </button>
-
-          {/* Progress Bar */}
-          <div className="mt-4">
-            <div className="h-4 bg-green-200 rounded-full overflow-hidden">
-              <div
-                className={`h-full transition-all duration-150 ${
-                  progress >= 100 ? 'bg-green-500' : 'bg-green-400'
-                }`}
-                style={{ width: `${progress}%` }}
-              />
+              {onBoard && <div className={`absolute text-5xl transition-transform duration-75 pointer-events-none ${knife.chopping ? 'translate-y-8 rotate-0' : '-translate-y-4 -rotate-45'}`} style={{ left: '50%', top: '0', transform: `translateX(-50%)` }}>🔪</div>}
             </div>
           </div>
         </div>
       </div>
+      {dragItem && <div className="fixed pointer-events-none text-4xl z-[100] transform -translate-x-1/2 -translate-y-1/2" style={{ left: mousePos.x, top: mousePos.y }}>{getEmoji(dragItem)}</div>}
     </div>
   );
 }

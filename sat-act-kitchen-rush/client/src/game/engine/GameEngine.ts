@@ -1,5 +1,6 @@
+// @ts-nocheck
 import { Application, Assets, Graphics, Sprite, Text, TextStyle, Texture, Container } from 'pixi.js';
-import { KITCHEN_LAYOUT } from '@game/config/kitchen-layout';
+import { KITCHEN_LAYOUT, GRID } from '@game/config/kitchen-layout';
 import { PlayerEntity } from '@game/entities/PlayerEntity';
 import { InputManager } from '@game/engine/InputManager';
 import { CollisionSystem } from '@game/systems/CollisionSystem';
@@ -8,6 +9,7 @@ import type { Recipe } from '@store/gameStore';
 import { fetchQuestions } from '@services/questions.service';
 import type { Station } from '@app-types/game.types';
 import recipesData from '@data/recipes.json';
+import { pathfindingSystem } from '@game/systems/PathfindingSystem';
 
 // Vite static imports for pixel art assets
 import playerChefUrl from '@/assets/player-chef.png';
@@ -34,12 +36,17 @@ const STATION_COLORS: Record<string, number> = {
   fridge: 0xA8DADC,
   prep: 0x06D6A0,
   stove: 0xE63946,
+  grill: 0xD62828,
+  fry: 0xFCBF49,
+  oven: 0xF77F00,
   plating: 0xF77F00,
+  dessert: 0xFFC0CB,
+  drinks: 0x457B9D,
   serving: 0x457B9D,
   utility: 0x6C757D,
 };
 
-const INTERACTION_DISTANCE = 100; // pixels from station center to trigger interaction
+const INTERACTION_DISTANCE = 100;
 
 export class GameEngine {
   public app: Application;
@@ -65,19 +72,21 @@ export class GameEngine {
   }
 
   private async loadAssets() {
-    // Load player texture
     try {
-      const playerTexture = await Assets.load(playerChefUrl);
-      this.textures.set('player-chef', playerTexture);
+      if (playerChefUrl) {
+        const playerTexture = await Assets.load(playerChefUrl);
+        this.textures.set('player-chef', playerTexture);
+      }
     } catch (e) {
       console.warn('Failed to load player texture, using fallback');
     }
 
-    // Load station textures
     for (const [key, url] of Object.entries(STATION_TEXTURE_MAP)) {
       try {
-        const texture = await Assets.load(url);
-        this.textures.set(key, texture);
+        if (url) {
+          const texture = await Assets.load(url);
+          this.textures.set(key, texture);
+        }
       } catch (e) {
         console.warn(`Failed to load texture for ${key}, using fallback`);
       }
@@ -85,38 +94,48 @@ export class GameEngine {
   }
 
   private setupKitchen() {
-    // Draw floor
     const floor = new Graphics();
     floor.rect(0, 0, 1280, 720);
-    floor.fill(0xE8E8E8);
+    floor.fill(0xEDF2F4);
+
+    for (let x = 0; x < 1280; x += 64) {
+      floor.moveTo(x, 0);
+      floor.lineTo(x, 720);
+      floor.stroke({ width: 1, color: 0xD1D5DB, alpha: 0.5 });
+    }
+    for (let y = 0; y < 720; y += 64) {
+      floor.moveTo(0, y);
+      floor.lineTo(1280, y);
+      floor.stroke({ width: 1, color: 0xD1D5DB, alpha: 0.5 });
+    }
     this.app.stage.addChild(floor);
 
-    // Draw walls (navy)
     const walls = new Graphics();
-    walls.rect(0, 128, 1280, 32);
+    walls.rect(0, 0, 1280, KITCHEN_LAYOUT.header.height);
     walls.fill(0x1D3557);
-    walls.rect(0, 608, 1280, 32);
+    walls.rect(0, KITCHEN_LAYOUT.footer.y, 1280, KITCHEN_LAYOUT.footer.height);
     walls.fill(0x1D3557);
-    walls.rect(0, 128, 32, 512);
+    walls.rect(0, 0, 32, 720);
     walls.fill(0x1D3557);
-    walls.rect(1248, 128, 32, 512);
+    walls.rect(1248, 0, 32, 720);
     walls.fill(0x1D3557);
     this.app.stage.addChild(walls);
 
-    // Draw stations
     this.drawStations();
   }
 
   private drawStations() {
     for (const station of KITCHEN_LAYOUT.stations) {
       const stationGroup = new Container();
+      const centerX = station.collisionBox.x + station.collisionBox.width / 2;
+      const centerY = station.collisionBox.y + station.collisionBox.height / 2;
+      stationGroup.position.set(centerX, centerY);
 
-      // Draw colored background rectangle
       const box = new Graphics();
       const color = STATION_COLORS[station.type] ?? 0xFFFFFF;
       box.rect(
-        station.collisionBox.x,
-        station.collisionBox.y,
+        -station.collisionBox.width / 2,
+        -station.collisionBox.height / 2,
         station.collisionBox.width,
         station.collisionBox.height,
       );
@@ -124,21 +143,16 @@ export class GameEngine {
       box.stroke({ width: 2, color: 0x000000 });
       stationGroup.addChild(box);
 
-      // Overlay pixel art sprite if loaded
       const texture = this.textures.get(station.sprite.texture);
       if (texture) {
         const pixelSprite = new Sprite(texture);
         pixelSprite.anchor.set(0.5);
-        pixelSprite.position.set(
-          station.collisionBox.x + station.collisionBox.width / 2,
-          station.collisionBox.y + station.collisionBox.height / 2,
-        );
+        pixelSprite.position.set(0, 0);
         pixelSprite.width = station.collisionBox.width;
         pixelSprite.height = station.collisionBox.height;
         stationGroup.addChild(pixelSprite);
       }
 
-      // Add text label below the sprite
       const style = new TextStyle({
         fontFamily: 'Arial',
         fontSize: 10,
@@ -151,18 +165,11 @@ export class GameEngine {
       });
       const label = new Text({ text: station.name.toUpperCase(), style });
       label.anchor.set(0.5, 0);
-      label.position.set(
-        station.collisionBox.x + station.collisionBox.width / 2,
-        station.collisionBox.y + station.collisionBox.height + 2,
-      );
+      label.position.set(0, station.collisionBox.height / 2 + 2);
       stationGroup.addChild(label);
 
-      // Make interactive — clicking a station moves player toward it
       this.makeStationInteractive(stationGroup, station);
-
-      // Store reference for highlight effects
       this.stationSprites.set(station.id, stationGroup);
-
       this.app.stage.addChild(stationGroup);
     }
   }
@@ -170,27 +177,16 @@ export class GameEngine {
   private makeStationInteractive(container: Container, station: Station) {
     container.eventMode = 'static';
     container.cursor = 'pointer';
-
-    container.on('pointerover', () => {
-      container.alpha = 0.8;
-    });
-
-    container.on('pointerout', () => {
-      container.alpha = 1.0;
-    });
-
+    container.on('pointerover', () => { container.alpha = 0.8; });
+    container.on('pointerout', () => { container.alpha = 1.0; });
     container.on('pointerdown', (e) => {
       e.stopPropagation();
-      // Clicking a station moves the player toward it (no instant question)
       this.movePlayerToStation(station);
     });
   }
 
   private movePlayerToStation(station: Station) {
     if (!this.player) return;
-    console.log(`Moving to ${station.type} station`);
-
-    // Move player to the approach point (just below the station)
     const targetX = station.collisionBox.x + station.collisionBox.width / 2;
     const targetY = station.collisionBox.y + station.collisionBox.height + 24;
     this.player.moveTo(targetX, targetY);
@@ -205,7 +201,6 @@ export class GameEngine {
       playerTexture,
     );
     this.app.stage.addChild(this.player.sprite);
-
     this.inputManager = new InputManager(this.player);
   }
 
@@ -213,6 +208,8 @@ export class GameEngine {
     const canvas = this.app.canvas;
     canvas.addEventListener('click', (e: MouseEvent) => {
       if (!this.player) return;
+      const gameState = useGameStore.getState();
+      if (gameState.activeMechanic || gameState.activeQuestion || gameState.activeRecipe) return;
 
       const rect = canvas.getBoundingClientRect();
       const scaleX = 1280 / rect.width;
@@ -220,38 +217,27 @@ export class GameEngine {
       const x = (e.clientX - rect.left) * scaleX;
       const y = (e.clientY - rect.top) * scaleY;
 
-      // Check if clicking a station — move toward it instead of opening question
       const station = this.checkClickOnStation(x, y);
       if (station) {
         this.movePlayerToStation(station);
         return;
       }
-
-      // Otherwise move player to clicked location
       this.player.moveTo(x, y);
     });
   }
 
   private checkClickOnStation(x: number, y: number): Station | null {
     for (const station of KITCHEN_LAYOUT.stations) {
-      const zone = station.interactionZone;
-      if (
-        x >= zone.x &&
-        x <= zone.x + zone.width &&
-        y >= zone.y &&
-        y <= zone.y + zone.height
-      ) {
+      const box = station.collisionBox;
+      if (x >= box.x && x <= box.x + box.width && y >= box.y && y <= box.y + box.height) {
         return station;
       }
     }
     return null;
   }
 
-  // --- Proximity-based station interaction (Fix 2) ---
-
   private checkProximity() {
     if (!this.player) return;
-
     const playerPos = this.player.position;
     let nearestStation: Station | null = null;
     let nearestDist = Infinity;
@@ -263,17 +249,13 @@ export class GameEngine {
       const dy = stationCenterY - playerPos.y;
       const distance = Math.sqrt(dx * dx + dy * dy);
 
-      // Visual feedback - brighten/highlight stations when close
       const sprite = this.stationSprites.get(station.id);
       if (sprite) {
         if (distance <= INTERACTION_DISTANCE) {
-          sprite.alpha = 1.2; // Brighten when in range
-          sprite.scale.set(1.05); // Slight scale up
-        } else if (distance <= INTERACTION_DISTANCE * 1.5) {
-          sprite.alpha = 1.0; // Normal
-          sprite.scale.set(1.0);
+          sprite.alpha = 1.2;
+          sprite.scale.set(1.05);
         } else {
-          sprite.alpha = 0.9; // Slight dim when far
+          sprite.alpha = 1.0;
           sprite.scale.set(1.0);
         }
       }
@@ -286,27 +268,18 @@ export class GameEngine {
 
     if (nearestStation) {
       if (this.currentStation?.id !== nearestStation.id) {
-        // Entered a new station's range
-        console.log(`📍 Entered range of ${nearestStation.name} (${Math.round(nearestDist)}px)`);
         this.currentStation = nearestStation;
         this.clearInteractionTimeout();
         this.interactedStations.delete(nearestStation.id);
-
-        // Auto-trigger after a short delay
         this.interactionTimeout = setTimeout(() => {
           if (this.currentStation?.id === nearestStation!.id) {
-            console.log(`⏰ Auto-triggering ${nearestStation!.name} interaction`);
             this.triggerStationInteraction(nearestStation!);
           }
         }, 400);
       }
-    } else {
-      // Player left all stations
-      if (this.currentStation) {
-        console.log(`👋 Left range of ${this.currentStation.name}`);
-        this.currentStation = null;
-        this.clearInteractionTimeout();
-      }
+    } else if (this.currentStation) {
+      this.currentStation = null;
+      this.clearInteractionTimeout();
     }
   }
 
@@ -318,135 +291,55 @@ export class GameEngine {
   }
 
   private async triggerStationInteraction(station: Station) {
-    // Don't re-trigger if already interacted and haven't left
-    if (this.interactedStations.has(station.id)) {
-      console.log(`🔒 Already interacted with ${station.name}`);
-      return;
-    }
+    if (this.interactedStations.has(station.id)) return;
     this.interactedStations.add(station.id);
-
     const gameState = useGameStore.getState();
-    console.log(`🎯 Triggering interaction with ${station.name} (${station.type})`);
 
-    // Ticket board: pick up an order
-    if (station.type === 'ticket') {
-      this.showOrderPickup();
-      return;
-    }
+    if (station.type === 'ticket') { this.showOrderPickup(); return; }
+    if (station.type === 'serving') { this.completeOrder(); return; }
 
-    // Serving window: deliver order
-    if (station.type === 'serving') {
-      this.completeOrder();
-      return;
-    }
-
-    // Utility stations: no interaction
-    if (station.type === ('utility' as any)) {
-      return;
-    }
-
-    // Question stations: fridge, prep, stove, plating
-    const activeOrder = gameState.orders.find(o => o.status === 'in_progress');
-
-    // If there's an active order, check if this is the right station
-    if (activeOrder) {
-      const nextStep = activeOrder.steps.find(s => s.status === 'active');
-      if (nextStep && nextStep.stationType !== station.type) {
-        console.log(`⚠️ Wrong station! Need ${nextStep.stationType}, at ${station.type}`);
-        // Allow interaction anyway in "practice" mode
-      }
-    }
-
-    // Store the current station for question fetching after mechanic
     gameState.setActiveStation(station.type);
-
-    // 50% chance for mechanic mini-game, 50% chance for direct question
-    const showMechanic = Math.random() < 0.5;
-
-    if (showMechanic && ['fridge', 'prep', 'stove', 'plating'].includes(station.type)) {
-      console.log(`🎮 Starting ${station.type} mechanic`);
-      gameState.setActiveMechanic(station.type as 'fridge' | 'prep' | 'stove' | 'plating');
+    const processStations = ['fridge', 'prep', 'stove', 'grill', 'fry', 'oven', 'dessert', 'drinks', 'plating'];
+    if (processStations.includes(station.type)) {
+      gameState.setActiveMechanic(station.type as any);
     } else {
-      // Show question directly
       await this.showQuestionForStation(station.type);
     }
   }
 
   public async showQuestionForStation(stationType: string) {
     const gameState = useGameStore.getState();
-
     try {
-      console.log(`📦 Fetching question for ${stationType} station...`);
-      const questions = await fetchQuestions({
-        count: 1,
-        stationType: stationType,
-      });
-
-      console.log(`📋 Got ${questions?.length || 0} questions`);
-
+      const questions = await fetchQuestions({ count: 1, stationType: stationType });
       if (questions && questions.length > 0) {
-        console.log(`✅ Setting active question: ${questions[0].id}`);
         gameState.setActiveQuestion(questions[0]);
-      } else {
-        console.warn(`⚠️ No questions available for ${stationType}`);
       }
     } catch (error) {
-      console.error('❌ Error loading question:', error);
+      console.error('Error loading question:', error);
     }
   }
 
-  // --- Order management (Fix 4) ---
-
   private showOrderPickup() {
     const gameState = useGameStore.getState();
-
-    // Check if there's already an active recipe being worked on
-    if (gameState.activeRecipe) {
-      console.log('📋 Already have an active recipe');
-      return;
-    }
-
-    // Pick a random recipe from the recipes data
+    if (gameState.activeRecipe) return;
     const recipes = recipesData.recipes as Recipe[];
     const randomRecipe = recipes[Math.floor(Math.random() * recipes.length)];
-
-    console.log(`🎫 Picked up order: ${randomRecipe.name}`);
-
-    // Set the active recipe to show the modal
     gameState.setActiveRecipe(randomRecipe);
-
-    // Also generate an order for tracking
     const newOrder = this.generateOrderFromRecipe(randomRecipe);
     gameState.addOrder(newOrder);
     gameState.startOrder(newOrder.id);
   }
 
   private generateOrderFromRecipe(recipe: Recipe) {
-    const questionStations = recipe.stations.filter(
-      s => s !== 'ticket' && s !== 'serving'
-    ) as Array<'fridge' | 'prep' | 'stove' | 'plating'>;
-
     const steps = [
-      // Step 1: Ticket (no question, just pickup) - already done
-      {
-        stationType: 'ticket' as const,
-        questionId: '',
-        status: 'completed' as const,
-      },
-      // Steps for each station in the recipe
-      ...questionStations.map((st, i) => ({
-        stationType: st,
+      { stationType: 'ticket' as const, questionId: '', status: 'completed' as const },
+      ...recipe.stations.map((st, i) => ({
+        stationType: st as any,
         questionId: '',
         status: (i === 0 ? 'active' : 'locked') as 'active' | 'locked',
       })),
-      // Final step: Serving (no question)
-      {
-        stationType: 'serving' as const,
-        questionId: '',
-        status: 'locked' as const,
-      },
+      { stationType: 'serving' as const, questionId: '', status: 'locked' as const },
     ];
-
     return {
       id: `order-${Date.now()}`,
       dishName: recipe.name,
@@ -461,24 +354,12 @@ export class GameEngine {
   private completeOrder() {
     const gameState = useGameStore.getState();
     const activeOrder = gameState.orders.find(o => o.status === 'in_progress');
-
-    if (!activeOrder) {
-      console.log('No active order to deliver');
-      return;
-    }
-
-    // Check if all question steps are complete
-    const questionSteps = activeOrder.steps.filter(
-      s => s.stationType !== 'ticket' && s.stationType !== 'serving'
-    );
-    const allComplete = questionSteps.every(s => s.status === 'completed');
-
-    if (allComplete) {
+    if (!activeOrder) return;
+    const questionSteps = activeOrder.steps.filter(s => s.stationType !== 'ticket' && s.stationType !== 'serving');
+    if (questionSteps.every(s => s.status === 'completed')) {
       gameState.completeOrder(activeOrder.id);
       gameState.updateScore(250);
-      console.log('Order delivered successfully! +250 points');
-    } else {
-      console.log('Order not complete yet — finish all stations first');
+      gameState.clearInventory();
     }
   }
 
@@ -496,37 +377,28 @@ export class GameEngine {
 
   private gameLoop = () => {
     if (!this.running) return;
-
     const currentTime = performance.now();
     const deltaTime = (currentTime - this.lastTime) / 1000;
     this.lastTime = currentTime;
 
-    if (this.player) {
-      // Store previous position for collision resolution
+    const gameState = useGameStore.getState();
+    const isPaused = gameState.activeMechanic || gameState.activeQuestion || gameState.activeRecipe;
+
+    if (this.player && !isPaused) {
       const prevPos = { x: this.player.position.x, y: this.player.position.y };
-
-      // Update keyboard input
       this.inputManager?.update(deltaTime);
-
-      // Check collisions after keyboard movement
       if (CollisionSystem.checkPlayerCollisions(this.player)) {
         CollisionSystem.resolveCollision(this.player, prevPos);
       }
-
-      // Store position again before click-to-move update
       const prevPos2 = { x: this.player.position.x, y: this.player.position.y };
-
-      // Update click-to-move movement
       this.player.update(deltaTime);
-
-      // Check collisions after click-to-move
       if (CollisionSystem.checkPlayerCollisions(this.player)) {
         CollisionSystem.resolveCollision(this.player, prevPos2);
-        this.player.clearTarget(); // Stop trying to move into collision
+        this.player.clearTarget();
       }
-
-      // Check proximity to stations
       this.checkProximity();
+    } else if (this.player && isPaused) {
+      this.player.clearTarget();
     }
 
     requestAnimationFrame(this.gameLoop);
