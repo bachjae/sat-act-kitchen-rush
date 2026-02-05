@@ -1,192 +1,88 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect } from 'react';
+import { useGameStore } from '@store/gameStore';
 
 interface StoveMechanicProps {
   onComplete: (success: boolean) => void;
 }
 
-type CookingState = 'raw' | 'cooking' | 'perfect' | 'burnt';
-
 export function StoveMechanic({ onComplete }: StoveMechanicProps) {
-  const [cookingProgress, setCookingProgress] = useState(0);
-  const [cookingState, setCookingState] = useState<CookingState>('raw');
-  const [isHeating, setIsHeating] = useState(false);
+  const { setActiveMechanic, addToInventory, removeFromInventory, inventory } = useGameStore();
+  const [heat, setHeat] = useState(20);
+  const [progress, setProgress] = useState(0);
+  const [flipped, setFlipped] = useState(false);
   const [gameOver, setGameOver] = useState(false);
-  const [result, setResult] = useState<'success' | 'fail' | null>(null);
+  const [isAddingHeat, setIsAddingHeat] = useState(false);
+  const [timeLeft, setTimeLeft] = useState(30);
+  const [onPan, setOnPan] = useState<string | null>(null);
 
-  // Cooking zones: 0-30 raw, 30-70 cooking, 70-90 perfect, 90+ burnt
-  const PERFECT_MIN = 70;
-  const PERFECT_MAX = 90;
+  const PERFECT_HEAT_MIN = 65;
+  const PERFECT_HEAT_MAX = 85;
 
   useEffect(() => {
-    if (gameOver) return;
+    const rawItem = inventory.find(i => i === 'beef' || i === 'chicken' || i === 'fish' || i.startsWith('sliced-'));
+    if (rawItem) setOnPan(rawItem);
+  }, [inventory]);
 
+  useEffect(() => {
+    if (gameOver || !onPan) return;
     const interval = setInterval(() => {
-      if (isHeating) {
-        setCookingProgress(prev => {
-          const next = Math.min(prev + 2, 100);
-
-          // Update cooking state
-          if (next < 30) setCookingState('raw');
-          else if (next < 70) setCookingState('cooking');
-          else if (next < 90) setCookingState('perfect');
-          else {
-            setCookingState('burnt');
-            // Auto fail if burnt
+      setHeat(h => {
+        const next = Math.max(0, Math.min(100, h + (isAddingHeat ? 3 : -1.5)));
+        if (next >= 100) { setGameOver(true); onComplete(false); }
+        return next;
+      });
+      if (heat >= PERFECT_HEAT_MIN && heat <= PERFECT_HEAT_MAX) {
+        setProgress(p => {
+          const next = p + ((p >= 50 && !flipped) ? 0.2 : 1);
+          if (next >= 100) {
             setGameOver(true);
-            setResult('fail');
-            onComplete(false);
+            if (flipped) {
+              removeFromInventory(onPan);
+              addToInventory(`cooked-${onPan}`);
+              setTimeout(() => onComplete(true), 500);
+            } else { onComplete(false); }
           }
-
           return next;
         });
       }
+      setTimeLeft(t => {
+        if (t <= 0) { setGameOver(true); onComplete(false); return 0; }
+        return t - 0.1;
+      });
     }, 100);
-
     return () => clearInterval(interval);
-  }, [isHeating, gameOver, onComplete]);
+  }, [heat, isAddingHeat, gameOver, onPan, flipped, onComplete, removeFromInventory, addToInventory]);
 
-  const handleServe = useCallback(() => {
-    if (gameOver) return;
-
-    setGameOver(true);
-    const success = cookingProgress >= PERFECT_MIN && cookingProgress <= PERFECT_MAX;
-    setResult(success ? 'success' : 'fail');
-    onComplete(success);
-  }, [gameOver, cookingProgress, onComplete]);
-
-  const getProgressColor = () => {
-    if (cookingProgress < 30) return 'bg-blue-400';
-    if (cookingProgress < 70) return 'bg-yellow-400';
-    if (cookingProgress < 90) return 'bg-green-500';
-    return 'bg-red-600';
-  };
-
-  const getStateEmoji = () => {
-    switch (cookingState) {
-      case 'raw': return '🥶';
-      case 'cooking': return '🍳';
-      case 'perfect': return '✨';
-      case 'burnt': return '🔥';
-    }
-  };
-
-  const getFoodEmoji = () => {
-    if (cookingProgress < 30) return '🥩'; // Raw
-    if (cookingProgress < 70) return '🍖'; // Cooking
-    if (cookingProgress < 90) return '🥘'; // Perfect
-    return '💨'; // Burnt/smoke
-  };
+  const handleFlip = () => { if (progress >= 40 && progress <= 60) setFlipped(true); };
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-50">
-      <div className="bg-red-50 rounded-xl shadow-2xl max-w-md w-full mx-4 overflow-hidden">
-        {/* Header */}
-        <div className="bg-red-600 text-white px-6 py-4">
-          <div className="flex justify-between items-center">
-            <h2 className="text-xl font-bold flex items-center gap-2">
-              <span>🔥</span> Stove Station
-            </h2>
-            <div className="text-2xl">{getStateEmoji()}</div>
-          </div>
+    <div className="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-50 select-none">
+      <div className="bg-red-50 rounded-xl shadow-2xl max-w-md w-full mx-4 overflow-hidden relative border-4 border-red-600">
+        <button onClick={() => setActiveMechanic(null)} className="absolute top-2 right-2 w-8 h-8 flex items-center justify-center rounded-full bg-red-800 bg-opacity-20 text-red-900 hover:bg-red-500 hover:text-white transition-colors z-10">✕</button>
+        <div className="bg-red-600 text-white px-6 py-4 flex justify-between items-center">
+          <h2 className="text-xl font-bold flex items-center gap-2"><span>🔥</span> Stove Station</h2>
+          <div className="bg-red-800 px-3 py-1 rounded-full font-mono">{Math.ceil(timeLeft)}s</div>
         </div>
-
-        {/* Instructions */}
-        <div className="px-6 py-3 bg-red-100 border-b border-red-200">
-          <p className="text-red-800 font-medium text-center">
-            Hold to cook! Release in the GREEN zone!
-          </p>
-        </div>
-
-        {/* Cooking Area */}
-        <div className="p-6">
-          {/* Stove Visual */}
-          <div className="relative h-40 bg-gray-800 rounded-xl mb-4 flex items-center justify-center">
-            {/* Burner glow */}
-            <div className={`absolute inset-4 rounded-full transition-all duration-300 ${
-              isHeating
-                ? 'bg-gradient-radial from-orange-500 via-red-600 to-transparent animate-pulse'
-                : 'bg-gray-700'
-            }`} />
-
-            {/* Pan */}
-            <div className="relative z-10 text-6xl">
-              {getFoodEmoji()}
-            </div>
-
-            {/* Steam/smoke when cooking */}
-            {isHeating && cookingProgress > 30 && (
-              <div className="absolute top-2 text-2xl animate-bounce">
-                {cookingProgress > 85 ? '💨' : '♨️'}
+        <div className="p-6 space-y-6">
+          {!onPan ? <div className="text-center py-12 text-red-800 font-bold uppercase italic opacity-50">No ingredient on pan</div> : (
+            <>
+              <div className="relative h-40 bg-gray-800 rounded-full border-8 border-gray-700 flex items-center justify-center">
+                <div className="text-6xl transition-transform duration-300" style={{ transform: flipped ? 'rotateX(180deg)' : '' }}>🥘</div>
+                {isAddingHeat && <div className="absolute inset-0 bg-red-500 opacity-20 animate-pulse rounded-full" />}
               </div>
-            )}
-          </div>
-
-          {/* Temperature Gauge */}
-          <div className="mb-4">
-            <div className="flex justify-between text-xs mb-1 font-medium">
-              <span className="text-blue-500">RAW</span>
-              <span className="text-yellow-500">COOKING</span>
-              <span className="text-green-500">PERFECT</span>
-              <span className="text-red-500">BURNT</span>
-            </div>
-            <div className="h-8 bg-gradient-to-r from-blue-300 via-yellow-300 via-green-400 to-red-500 rounded-full relative overflow-hidden">
-              {/* Perfect zone indicator */}
-              <div
-                className="absolute top-0 bottom-0 border-2 border-white bg-green-400 bg-opacity-30"
-                style={{ left: '70%', width: '20%' }}
-              />
-
-              {/* Progress indicator */}
-              <div
-                className="absolute top-0 bottom-0 w-2 bg-white border-2 border-gray-800 rounded-full transition-all duration-100"
-                style={{ left: `${cookingProgress}%`, transform: 'translateX(-50%)' }}
-              />
-            </div>
-            <div className="text-center mt-2 text-lg font-bold text-gray-700">
-              {Math.round(cookingProgress)}% Cooked
-            </div>
-          </div>
-
-          {/* Control Buttons */}
-          <div className="space-y-3">
-            <button
-              onMouseDown={() => !gameOver && setIsHeating(true)}
-              onMouseUp={() => setIsHeating(false)}
-              onMouseLeave={() => setIsHeating(false)}
-              onTouchStart={() => !gameOver && setIsHeating(true)}
-              onTouchEnd={() => setIsHeating(false)}
-              disabled={gameOver}
-              className={`
-                w-full py-6 rounded-xl font-bold text-xl transition-all select-none
-                ${gameOver
-                  ? 'bg-gray-300 text-gray-500'
-                  : isHeating
-                    ? 'bg-orange-600 text-white scale-95'
-                    : 'bg-orange-500 hover:bg-orange-600 text-white'
-                }
-              `}
-            >
-              {gameOver
-                ? result === 'success' ? '✅ Perfectly Cooked!' : '❌ Cooking Failed!'
-                : isHeating ? '🔥 COOKING...' : 'HOLD TO COOK'
-              }
-            </button>
-
-            {!gameOver && cookingProgress >= 30 && (
-              <button
-                onClick={handleServe}
-                className={`
-                  w-full py-4 rounded-xl font-bold text-lg transition-all
-                  ${cookingState === 'perfect'
-                    ? 'bg-green-500 hover:bg-green-600 text-white animate-pulse'
-                    : 'bg-gray-400 hover:bg-gray-500 text-white'
-                  }
-                `}
-              >
-                🍽️ SERVE NOW
-              </button>
-            )}
-          </div>
+              <div className="h-6 bg-gray-200 rounded-full relative overflow-hidden border-2 border-gray-300">
+                <div className="absolute h-full bg-green-400 opacity-50" style={{ left: `${PERFECT_HEAT_MIN}%`, width: `${PERFECT_HEAT_MAX - PERFECT_HEAT_MIN}%` }} />
+                <div className={`h-full transition-all duration-100 ${heat > PERFECT_HEAT_MAX ? 'bg-red-500' : heat < PERFECT_HEAT_MIN ? 'bg-blue-400' : 'bg-green-500'}`} style={{ width: `${heat}%` }} />
+              </div>
+              <div className="h-4 bg-gray-200 rounded-full overflow-hidden border border-gray-300">
+                <div className="h-full bg-orange-500 transition-all duration-300" style={{ width: `${progress}%` }} />
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <button onMouseDown={() => setIsAddingHeat(true)} onMouseUp={() => setIsAddingHeat(false)} onMouseLeave={() => setIsAddingHeat(false)} className="py-4 bg-red-600 text-white rounded-xl font-black shadow-lg active:scale-95 transition-all">HEAT</button>
+                <button onClick={handleFlip} disabled={flipped || progress < 40 || progress > 65} className={`py-4 rounded-xl font-black text-white transition-all ${!flipped && progress >= 40 && progress <= 60 ? 'bg-blue-600 animate-bounce shadow-lg' : 'bg-gray-400'}`}>FLIP</button>
+              </div>
+            </>
+          )}
         </div>
       </div>
     </div>

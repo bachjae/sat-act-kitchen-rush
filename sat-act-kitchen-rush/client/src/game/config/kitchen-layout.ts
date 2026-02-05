@@ -9,24 +9,18 @@ export const GRID: GridConfig = {
 };
 
 /*
-  Kitchen Layout Diagram:
+  Redesigned Kitchen Layout:
   ┌─────────────────────────────────────────────────────────┐
-  │                    CUSTOMER AREA (header)                │
+  │                    CUSTOMER AREA (Top)                   │
   ├─────────────────────────────────────────────────────────┤
-  │  TICKET    [  Customer Counter / Pass-Through  ] SERVING │
-  │  BOARD                                          WINDOW   │
-  ├─────────────────────────────────────────────────────────┤
-  │                                                          │
-  │  ┌──────┐  ┌──────┐     ┌──────┐  ┌──────┐  ┌──────┐  │
-  │  │FRIDGE│  │ COLD │     │STOVE │  │ OVEN │  │PLATING│  │
-  │  │      │  │ PREP │     │      │  │      │  │       │  │
-  │  └──────┘  └──────┘     └──────┘  └──────┘  └──────┘  │
-  │                                                          │
-  │              [Main Kitchen Floor - Walkable]             │
-  │                                                          │
+  │ [TICKET]                                      [SERVING] │
+  │                                                         │
+  │ [FRIDGE]      [PREP]        [PLATING]         [DRINKS]  │
+  │                                                         │
+  │                                               [DESSERT] │
+  │                                                         │
+  │      [STOVE]    [GRILL]    [OVEN]    [FRY]              │
   └─────────────────────────────────────────────────────────┘
-
-  Flow: Ticket → Fridge → Prep → Stove → Plating → Serving
 */
 
 export const KITCHEN_LAYOUT: KitchenLayout = {
@@ -51,108 +45,136 @@ export const KITCHEN_LAYOUT: KitchenLayout = {
 
   playArea: {
     x: 32,
-    y: 160,
+    y: 128,
     width: 1216,
-    height: 480,
+    height: 512,
   },
 
   stations: [
-    // === FRONT OF HOUSE (Top row) ===
-
-    // Ticket Board — left side, where orders come in
+    // === EXPO / PASS (Top Row) ===
     {
       id: 'ticket-board',
-      type: 'ticket' as StationType,
+      type: 'ticket',
       name: 'Order Tickets',
-      position: { x: 160, y: 200 },
-      collisionBox: { x: 112, y: 168, width: 96, height: 72 },
-      interactionZone: { x: 112, y: 168, width: 96, height: 96 },
+      position: { x: 160, y: 160 },
+      collisionBox: { x: 112, y: 128, width: 96, height: 64 },
+      interactionZone: { x: 96, y: 128, width: 128, height: 128 },
       sprite: { texture: 'ticket-board', anchor: { x: 0.5, y: 1 }, scale: 1 },
-      overlayAnchor: { x: 160, y: 168 },
+      overlayAnchor: { x: 160, y: 128 },
     },
-
-    // Serving Window — right side, where completed orders go
     {
       id: 'serving-window',
-      type: 'serving' as StationType,
+      type: 'serving',
       name: 'Serving Window',
-      position: { x: 1120, y: 200 },
-      collisionBox: { x: 1072, y: 168, width: 96, height: 72 },
-      interactionZone: { x: 1072, y: 168, width: 96, height: 96 },
+      position: { x: 1120, y: 160 },
+      collisionBox: { x: 1072, y: 128, width: 96, height: 64 },
+      interactionZone: { x: 1056, y: 128, width: 128, height: 128 },
       sprite: { texture: 'serving-window', anchor: { x: 0.5, y: 1 }, scale: 1 },
-      overlayAnchor: { x: 1120, y: 168 },
+      overlayAnchor: { x: 1120, y: 128 },
     },
 
-    // === COLD PREP AREA (Left side) ===
-
-    // Walk-in Fridge / Cooler
+    // === STORAGE (Left) ===
     {
       id: 'fridge',
-      type: 'fridge' as StationType,
+      type: 'fridge',
       name: 'Walk-in Cooler',
-      position: { x: 200, y: 380 },
-      collisionBox: { x: 152, y: 336, width: 96, height: 88 },
-      interactionZone: { x: 132, y: 316, width: 136, height: 128 },
+      position: { x: 100, y: 350 },
+      collisionBox: { x: 52, y: 300, width: 96, height: 128 },
+      interactionZone: { x: 32, y: 280, width: 160, height: 160 },
       sprite: { texture: 'fridge', anchor: { x: 0.5, y: 1 }, scale: 1 },
-      overlayAnchor: { x: 200, y: 336 },
+      overlayAnchor: { x: 100, y: 300 },
     },
 
-    // Cold Prep Station (next to fridge)
+    // === PREP (Mid-Left) ===
     {
       id: 'prep-station',
-      type: 'prep' as StationType,
+      type: 'prep',
       name: 'Prep Station',
-      position: { x: 400, y: 380 },
-      collisionBox: { x: 352, y: 336, width: 96, height: 88 },
-      interactionZone: { x: 332, y: 316, width: 136, height: 128 },
+      position: { x: 350, y: 350 },
+      collisionBox: { x: 302, y: 302, width: 128, height: 96 },
+      interactionZone: { x: 280, y: 280, width: 180, height: 180 },
       sprite: { texture: 'prep-station', anchor: { x: 0.5, y: 1 }, scale: 1 },
-      overlayAnchor: { x: 400, y: 336 },
+      overlayAnchor: { x: 350, y: 302 },
     },
 
-    // === HOT LINE (Center) ===
-
-    // Stove & Grill
+    // === HOT LINE (Bottom Row) ===
     {
       id: 'stove',
-      type: 'stove' as StationType,
-      name: 'Stove & Grill',
-      position: { x: 640, y: 380 },
-      collisionBox: { x: 592, y: 336, width: 96, height: 88 },
-      interactionZone: { x: 572, y: 316, width: 136, height: 128 },
+      type: 'stove',
+      name: 'Stove',
+      position: { x: 400, y: 580 },
+      collisionBox: { x: 352, y: 532, width: 96, height: 96 },
+      interactionZone: { x: 332, y: 512, width: 136, height: 136 },
       sprite: { texture: 'stove', anchor: { x: 0.5, y: 1 }, scale: 1 },
-      overlayAnchor: { x: 640, y: 336 },
+      overlayAnchor: { x: 400, y: 532 },
     },
-
-    // Oven (next to stove)
+    {
+      id: 'grill',
+      type: 'grill',
+      name: 'Grill',
+      position: { x: 550, y: 580 },
+      collisionBox: { x: 502, y: 532, width: 96, height: 96 },
+      interactionZone: { x: 482, y: 512, width: 136, height: 136 },
+      sprite: { texture: 'grill', anchor: { x: 0.5, y: 1 }, scale: 1 },
+      overlayAnchor: { x: 550, y: 532 },
+    },
     {
       id: 'oven',
-      type: 'stove' as StationType,
+      type: 'oven',
       name: 'Oven',
-      position: { x: 820, y: 380 },
-      collisionBox: { x: 772, y: 336, width: 96, height: 88 },
-      interactionZone: { x: 752, y: 316, width: 136, height: 128 },
+      position: { x: 700, y: 580 },
+      collisionBox: { x: 652, y: 532, width: 96, height: 96 },
+      interactionZone: { x: 632, y: 512, width: 136, height: 136 },
       sprite: { texture: 'oven', anchor: { x: 0.5, y: 1 }, scale: 1 },
-      overlayAnchor: { x: 820, y: 336 },
+      overlayAnchor: { x: 700, y: 532 },
+    },
+    {
+      id: 'fry',
+      type: 'fry',
+      name: 'Fryer',
+      position: { x: 850, y: 580 },
+      collisionBox: { x: 802, y: 532, width: 96, height: 96 },
+      interactionZone: { x: 782, y: 512, width: 136, height: 136 },
+      sprite: { texture: 'fry', anchor: { x: 0.5, y: 1 }, scale: 1 },
+      overlayAnchor: { x: 850, y: 532 },
     },
 
-    // === FINISHING AREA (Right side) ===
-
-    // Plating Station
+    // === FINISHING & OTHERS (Right) ===
     {
       id: 'plating-station',
-      type: 'plating' as StationType,
+      type: 'plating',
       name: 'Plating Station',
-      position: { x: 1020, y: 380 },
-      collisionBox: { x: 972, y: 336, width: 96, height: 88 },
-      interactionZone: { x: 952, y: 316, width: 136, height: 128 },
+      position: { x: 750, y: 350 },
+      collisionBox: { x: 702, y: 302, width: 128, height: 96 },
+      interactionZone: { x: 680, y: 280, width: 180, height: 180 },
       sprite: { texture: 'plating-station', anchor: { x: 0.5, y: 1 }, scale: 1 },
-      overlayAnchor: { x: 1020, y: 336 },
+      overlayAnchor: { x: 750, y: 302 },
+    },
+    {
+      id: 'drinks',
+      type: 'drinks',
+      name: 'Drink Station',
+      position: { x: 1050, y: 350 },
+      collisionBox: { x: 1002, y: 302, width: 96, height: 96 },
+      interactionZone: { x: 982, y: 280, width: 136, height: 136 },
+      sprite: { texture: 'drinks', anchor: { x: 0.5, y: 1 }, scale: 1 },
+      overlayAnchor: { x: 1050, y: 302 },
+    },
+    {
+      id: 'dessert',
+      type: 'dessert',
+      name: 'Dessert Station',
+      position: { x: 1050, y: 500 },
+      collisionBox: { x: 1002, y: 452, width: 96, height: 96 },
+      interactionZone: { x: 982, y: 432, width: 136, height: 136 },
+      sprite: { texture: 'dessert', anchor: { x: 0.5, y: 1 }, scale: 1 },
+      overlayAnchor: { x: 1050, y: 452 },
     },
   ],
 
   playerSpawn: {
     x: 640,
-    y: 520,
+    y: 450,
   },
 
   door: {
@@ -162,14 +184,7 @@ export const KITCHEN_LAYOUT: KitchenLayout = {
 };
 
 export const WAYPOINTS: Record<string, Position> = {
-  CENTER: { x: 640, y: 520 },
-  TICKET_APPROACH: { x: 160, y: 280 },
-  FRIDGE_APPROACH: { x: 200, y: 460 },
-  PREP_APPROACH: { x: 400, y: 460 },
-  STOVE_APPROACH: { x: 640, y: 460 },
-  OVEN_APPROACH: { x: 820, y: 460 },
-  PLATING_APPROACH: { x: 1020, y: 460 },
-  WINDOW_APPROACH: { x: 1120, y: 280 },
+  CENTER: { x: 640, y: 450 },
 };
 
 export const PALETTE = {

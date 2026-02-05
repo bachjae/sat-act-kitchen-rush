@@ -1,4 +1,4 @@
-export type StationType = 'ticket' | 'fridge' | 'prep' | 'stove' | 'plating' | 'serving';
+export type StationType = 'ticket' | 'fridge' | 'prep' | 'stove' | 'grill' | 'fry' | 'oven' | 'plating' | 'dessert' | 'drinks' | 'serving';
 
 export interface Position {
   x: number;
