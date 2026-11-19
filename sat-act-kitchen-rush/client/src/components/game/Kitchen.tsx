@@ -24,13 +24,19 @@ export function Kitchen() {
   const appRef = useRef<Application | null>(null);
   const [error, setError] = useState<string | null>(null);
 
+  // IMPORTANT: All hooks must be called before any conditional returns
+  const { activeMechanic, activeStation, setActiveMechanic, updateScore, updateOrderTimers, status } = useGameStore();
+
+  // Initialize PixiJS and GameEngine
   useEffect(() => {
     if (!canvasRef.current) return;
     if (appRef.current) return;
     let mounted = true;
+
     async function init() {
       if (!canvasRef.current || !mounted) return;
       try {
+        console.log('[Kitchen] Initializing PixiJS...');
         const app = new Application();
         await app.init({
           canvas: canvasRef.current,
@@ -41,17 +47,23 @@ export function Kitchen() {
         });
         if (!mounted) { app.destroy(); return; }
         appRef.current = app;
+
+        console.log('[Kitchen] Initializing GameEngine...');
         const engine = new GameEngine(app);
         await engine.init();
         if (!mounted) { app.destroy(); return; }
         engineRef.current = engine;
+
+        console.log('[Kitchen] Starting game loop...');
         engine.start();
+        console.log('[Kitchen] Game started successfully');
       } catch (err) {
-        console.error('Failed to initialize PixiJS:', err);
+        console.error('[Kitchen] Failed to initialize PixiJS:', err);
         setError(err instanceof Error ? err.message : 'Failed to initialize game renderer');
       }
     }
     init();
+
     return () => {
       mounted = false;
       if (engineRef.current) { engineRef.current.stop(); engineRef.current = null; }
@@ -59,12 +71,7 @@ export function Kitchen() {
     };
   }, []);
 
-  if (error) {
-    return <div className="min-h-screen flex items-center justify-center bg-gray-900 text-white p-8 text-center"><h1 className="text-xl font-bold text-red-500 mb-2">Renderer Error</h1><p>{error}</p></div>;
-  }
-
-  const { activeMechanic, activeStation, setActiveMechanic, updateScore, updateOrderTimers, status } = useGameStore();
-
+  // Order timer update effect
   useEffect(() => {
     if (status !== 'playing') return;
     let lastTime = performance.now();
@@ -76,19 +83,43 @@ export function Kitchen() {
     return () => clearInterval(interval);
   }, [status, updateOrderTimers]);
 
-  const handleMechanicComplete = async (success: boolean) => {
+  // Error state - shown after all hooks are called
+  if (error) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-900 text-white p-8 text-center">
+        <h1 className="text-xl font-bold text-red-500 mb-2">Renderer Error</h1>
+        <p>{error}</p>
+      </div>
+    );
+  }
+
+  // NEW FLOW: Mechanic completes AFTER question (no question after mechanic)
+  const handleMechanicComplete = (success: boolean) => {
     setActiveMechanic(null);
     if (success) {
       updateScore(50);
-      if (engineRef.current && activeStation) {
-        await engineRef.current.showQuestionForStation(activeStation);
-      }
+    }
+    // No question after mechanic - question was already answered first
+  };
+
+  // Called from QuestionModal after answer (correct or not)
+  // Player can always proceed to mechanic, but gets points only for correct answer
+  const handleQuestionAnswered = (_correct: boolean) => {
+    if (activeStation && engineRef.current) {
+      // Trigger the mechanic after answering question
+      engineRef.current.triggerMechanicForStation(activeStation);
     }
   };
 
   return (
-    <div className="relative w-full h-screen flex items-center justify-center bg-gray-900">
-      <canvas ref={canvasRef} className="pixel-perfect border-4 border-gray-800 shadow-2xl" style={{ imageRendering: 'pixelated' }} />
+    <div className="relative w-full h-screen flex items-center justify-center bg-gray-900 overflow-hidden">
+      <canvas
+        ref={canvasRef}
+        width={1280}
+        height={720}
+        className="pixel-perfect border-4 border-gray-800 shadow-2xl max-w-full max-h-full"
+        style={{ imageRendering: 'pixelated', aspectRatio: '16/9' }}
+      />
       <RecipeTicketModal />
       {activeMechanic === 'fridge' && <FridgeMechanic onComplete={handleMechanicComplete} />}
       {activeMechanic === 'prep' && <PrepMechanic onComplete={handleMechanicComplete} />}
@@ -101,7 +132,7 @@ export function Kitchen() {
       {activeMechanic === 'plating' && <PlatingMechanic onComplete={handleMechanicComplete} />}
       <TicketSidebar />
       <InventoryHotbar />
-      <QuestionModal />
+      <QuestionModal onAnswered={handleQuestionAnswered} />
     </div>
   );
 }

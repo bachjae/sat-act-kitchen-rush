@@ -8,13 +8,8 @@ interface Rect {
   height: number;
 }
 
-// Wall definitions matching the drawn walls in GameEngine
-const WALLS: Rect[] = [
-  { x: 0, y: 128, width: 1280, height: 32 },   // Top wall
-  { x: 0, y: 608, width: 1280, height: 32 },   // Bottom wall
-  { x: 0, y: 128, width: 32, height: 512 },     // Left wall
-  { x: 1248, y: 128, width: 32, height: 512 },  // Right wall
-];
+// Wall boundaries are now handled via boundary check in checkPlayerCollisions
+// PlayArea: x=32-1248, y=160-608 (32px walls on all sides from header/footer edges)
 
 export class CollisionSystem {
   static checkAABB(a: Rect, b: Rect): boolean {
@@ -38,11 +33,15 @@ export class CollisionSystem {
   static checkPlayerCollisions(player: PlayerEntity): boolean {
     const playerBox = this.getPlayerBox(player);
 
-    // Check wall collisions
-    for (const wall of WALLS) {
-      if (this.checkAABB(playerBox, wall)) {
-        return true;
-      }
+    // Boundary check - keep player in playable area
+    const minX = 48;  // Left wall + margin
+    const maxX = 1232; // Right wall - margin
+    const minY = 144; // Top wall + margin (below header)
+    const maxY = 592; // Bottom wall - margin (above footer)
+
+    if (playerBox.x < minX || playerBox.x + playerBox.width > maxX ||
+        playerBox.y < minY || playerBox.y + playerBox.height > maxY) {
+      return true;
     }
 
     // Check station collisions

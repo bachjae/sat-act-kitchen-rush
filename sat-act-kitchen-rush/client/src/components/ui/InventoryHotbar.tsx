@@ -4,7 +4,7 @@ const ITEM_EMOJIS: Record<string, string> = {
   'lettuce': '🥬',
   'sliced-lettuce': '🥗',
   'tomato': '🍅',
-  'sliced-tomato': '🥗',
+  'sliced-tomato': '🍅',
   'cheese': '🧀',
   'sliced-cheese': '🧀',
   'beef': '🥩',
@@ -16,6 +16,7 @@ const ITEM_EMOJIS: Record<string, string> = {
   'fish': '🐟',
   'sliced-fish': '🐟',
   'cooked-fish': '🐟',
+  'baked-fish': '🐟',
   'bacon': '🥓',
   'cooked-bacon': '🥓',
   'eggs': '🥚',
@@ -23,11 +24,17 @@ const ITEM_EMOJIS: Record<string, string> = {
   'pasta': '🍝',
   'cooked-pasta': '🍝',
   'potato': '🥔',
+  'sliced-potato': '🥔',
   'fries': '🍟',
+  'fried-chicken': '🍗',
+  'fried-fish': '🐟',
   'drink-cup': '🥤',
   'full-drink': '🥤',
   'cake-base': '🍰',
+  'cake': '🎂',
   'finished-dessert': '🍰',
+  'bread': '🍞',
+  'toasted-bread': '🥪',
 };
 
 export function InventoryHotbar() {
@@ -39,26 +46,34 @@ export function InventoryHotbar() {
     if (i < 9) slots[i] = item;
   });
 
-  return (
-    <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex gap-1 p-2 bg-gray-900 bg-opacity-80 rounded-lg border-4 border-gray-700">
-      {slots.map((item, i) => (
-        <div
-          key={i}
-          className={`
-            w-14 h-14 rounded-md border-4 flex items-center justify-center text-3xl
-            ${item ? 'bg-gray-600 border-gray-400' : 'bg-gray-800 border-gray-700'}
-          `}
-        >
-          {item && (ITEM_EMOJIS[item] || '❓')}
+  // Only show if there are items in inventory
+  const hasItems = inventory.length > 0;
 
-          {/* Tooltip for item name */}
-          {item && (
-            <div className="absolute -top-10 px-2 py-1 bg-black text-white text-xs rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap">
-              {item.replace('-', ' ').toUpperCase()}
+  return (
+    <div className={`fixed bottom-4 left-4 z-40 transition-opacity ${hasItems ? 'opacity-100' : 'opacity-50'}`}>
+      <div className="bg-gray-900/95 backdrop-blur-sm p-2 rounded-lg border-2 border-gray-600 shadow-xl">
+        <h3 className="text-white text-[10px] font-bold mb-1.5 uppercase tracking-wider text-center">Inventory</h3>
+        <div className="grid grid-cols-3 gap-1">
+          {slots.map((item, i) => (
+            <div
+              key={i}
+              className={`
+                group relative w-10 h-10 rounded border-2 flex items-center justify-center text-xl transition-all
+                ${item ? 'bg-gray-600 border-gray-400 hover:scale-110 hover:z-10' : 'bg-gray-800/50 border-gray-700'}
+              `}
+            >
+              {item && (ITEM_EMOJIS[item] || '❓')}
+
+              {/* Tooltip for item name */}
+              {item && (
+                <div className="absolute -top-7 left-1/2 -translate-x-1/2 px-2 py-0.5 bg-black text-white text-[9px] rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap z-50">
+                  {item.replace(/-/g, ' ').toUpperCase()}
+                </div>
+              )}
             </div>
-          )}
+          ))}
         </div>
-      ))}
+      </div>
     </div>
   );
 }

@@ -1,12 +1,12 @@
 import { useState, useEffect } from 'react';
-import { useGameStore } from '@store/gameStore';
+import { useGameStore, getActiveOrder } from '@store/gameStore';
 
 interface DrinkMechanicProps {
   onComplete: (success: boolean) => void;
 }
 
 export function DrinkMechanic({ onComplete }: DrinkMechanicProps) {
-  const { setActiveMechanic, addToInventory } = useGameStore();
+  const { setActiveMechanic, addToInventory, advanceOrderStep } = useGameStore();
   const [fill, setFill] = useState(0);
   const [pouring, setPouring] = useState(false);
   const [gameOver, setGameOver] = useState(false);
@@ -34,7 +34,15 @@ export function DrinkMechanic({ onComplete }: DrinkMechanicProps) {
     if (gameOver) return;
     setGameOver(true);
     const success = fill >= 85 && fill <= 95;
-    if (success) { addToInventory('full-drink'); }
+    if (success) {
+      addToInventory('full-drink');
+
+      // Advance order step
+      const activeOrder = getActiveOrder();
+      if (activeOrder) {
+        advanceOrderStep(activeOrder.id, 'drinks');
+      }
+    }
     onComplete(success);
   };
 

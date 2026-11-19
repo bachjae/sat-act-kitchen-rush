@@ -1,12 +1,15 @@
-import { useState, useEffect } from 'react';
-import { useGameStore } from '@store/gameStore';
+import { useState, useEffect, useMemo } from 'react';
+import { useGameStore, getActiveOrder } from '@store/gameStore';
 
 interface StoveMechanicProps {
   onComplete: (success: boolean) => void;
 }
 
+// Items that can be cooked on stove
+const STOVE_COOKABLE = ['pasta', 'eggs', 'sliced-tomato', 'sliced-beef', 'sliced-chicken', 'sliced-fish'];
+
 export function StoveMechanic({ onComplete }: StoveMechanicProps) {
-  const { setActiveMechanic, addToInventory, removeFromInventory, inventory } = useGameStore();
+  const { setActiveMechanic, addToInventory, removeFromInventory, inventory, advanceOrderStep } = useGameStore();
   const [heat, setHeat] = useState(20);
   const [progress, setProgress] = useState(0);
   const [flipped, setFlipped] = useState(false);
@@ -18,10 +21,16 @@ export function StoveMechanic({ onComplete }: StoveMechanicProps) {
   const PERFECT_HEAT_MIN = 65;
   const PERFECT_HEAT_MAX = 85;
 
+  // Find cookable items in inventory
+  const cookableItems = useMemo(() =>
+    inventory.filter(item => !item.startsWith('cooked-') && STOVE_COOKABLE.some(c => item === c || item.includes(c))),
+  [inventory]);
+
   useEffect(() => {
-    const rawItem = inventory.find(i => i === 'beef' || i === 'chicken' || i === 'fish' || i.startsWith('sliced-'));
-    if (rawItem) setOnPan(rawItem);
-  }, [inventory]);
+    if (cookableItems.length > 0 && !onPan) {
+      setOnPan(cookableItems[0]);
+    }
+  }, [cookableItems, onPan]);
 
   useEffect(() => {
     if (gameOver || !onPan) return;
@@ -38,7 +47,17 @@ export function StoveMechanic({ onComplete }: StoveMechanicProps) {
             setGameOver(true);
             if (flipped) {
               removeFromInventory(onPan);
-              addToInventory(`cooked-${onPan}`);
+              // Transform: sliced-X -> cooked-X, pasta -> cooked-pasta
+              const cookedItem = onPan.startsWith('sliced-')
+                ? `cooked-${onPan.replace('sliced-', '')}`
+                : `cooked-${onPan}`;
+              addToInventory(cookedItem);
+
+              // Advance order step
+              const activeOrder = getActiveOrder();
+              if (activeOrder) {
+                advanceOrderStep(activeOrder.id, 'stove');
+              }
               setTimeout(() => onComplete(true), 500);
             } else { onComplete(false); }
           }
@@ -51,9 +70,19 @@ export function StoveMechanic({ onComplete }: StoveMechanicProps) {
       });
     }, 100);
     return () => clearInterval(interval);
-  }, [heat, isAddingHeat, gameOver, onPan, flipped, onComplete, removeFromInventory, addToInventory]);
+  }, [heat, isAddingHeat, gameOver, onPan, flipped, onComplete, removeFromInventory, addToInventory, advanceOrderStep]);
 
   const handleFlip = () => { if (progress >= 40 && progress <= 60) setFlipped(true); };
+
+  const getEmoji = (item: string) => {
+    if (item.includes('pasta')) return '🍝';
+    if (item.includes('eggs')) return '🥚';
+    if (item.includes('tomato')) return '🍅';
+    if (item.includes('beef')) return '🥩';
+    if (item.includes('chicken')) return '🍗';
+    if (item.includes('fish')) return '🐟';
+    return '🥘';
+  };
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-50 select-none">
@@ -64,10 +93,16 @@ export function StoveMechanic({ onComplete }: StoveMechanicProps) {
           <div className="bg-red-800 px-3 py-1 rounded-full font-mono">{Math.ceil(timeLeft)}s</div>
         </div>
         <div className="p-6 space-y-6">
-          {!onPan ? <div className="text-center py-12 text-red-800 font-bold uppercase italic opacity-50">No ingredient on pan</div> : (
+          {!onPan ? (
+            <div className="text-center py-12">
+              <div className="text-red-800 font-bold uppercase italic opacity-50 mb-4">No ingredient for stove</div>
+              <p className="text-sm text-red-700">Get pasta, eggs, or sliced items first!</p>
+              <button onClick={() => setActiveMechanic(null)} className="mt-4 px-6 py-2 bg-red-600 text-white rounded-lg">Leave Station</button>
+            </div>
+          ) : (
             <>
               <div className="relative h-40 bg-gray-800 rounded-full border-8 border-gray-700 flex items-center justify-center">
-                <div className="text-6xl transition-transform duration-300" style={{ transform: flipped ? 'rotateX(180deg)' : '' }}>🥘</div>
+                <div className="text-6xl transition-transform duration-300" style={{ transform: flipped ? 'rotateX(180deg)' : '' }}>{getEmoji(onPan)}</div>
                 {isAddingHeat && <div className="absolute inset-0 bg-red-500 opacity-20 animate-pulse rounded-full" />}
               </div>
               <div className="h-6 bg-gray-200 rounded-full relative overflow-hidden border-2 border-gray-300">

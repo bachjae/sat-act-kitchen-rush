@@ -5,11 +5,17 @@
       "name": "Classic Burger Combo",
       "description": "Grilled beef burger with crispy fries",
       "difficulty": 3,
-      "stations": ["fridge", "prep", "grill", "fry", "drinks", "plating"],
+      "stations": ["fridge", "prep", "grill", "fry", "plating"],
       "ingredients": [
         { "name": "Beef Patty", "station": "fridge" },
         { "name": "Potato", "station": "fridge" },
-        { "name": "Lettuce", "station": "fridge" }
+        { "name": "Lettuce", "station": "fridge" },
+        { "name": "Tomato", "station": "fridge" },
+        { "name": "Chop Lettuce", "station": "prep" },
+        { "name": "Slice Tomato", "station": "prep" },
+        { "name": "Grill Patty", "station": "grill" },
+        { "name": "Fry Potatoes", "station": "fry" },
+        { "name": "Assemble Burger", "station": "plating" }
       ],
       "estimatedTime": 300
     },
@@ -21,7 +27,13 @@
       "stations": ["fridge", "prep", "oven", "plating"],
       "ingredients": [
         { "name": "Fish Fillets", "station": "fridge" },
-        { "name": "Bread", "station": "fridge" }
+        { "name": "Bread", "station": "fridge" },
+        { "name": "Lettuce", "station": "fridge" },
+        { "name": "Season Fish", "station": "prep" },
+        { "name": "Chop Lettuce", "station": "prep" },
+        { "name": "Bake Fish", "station": "oven" },
+        { "name": "Toast Bread", "station": "oven" },
+        { "name": "Plate Dish", "station": "plating" }
       ],
       "estimatedTime": 240
     },
@@ -30,10 +42,17 @@
       "name": "Pasta Carbonara",
       "description": "Traditional pasta with bacon and egg",
       "difficulty": 3,
-      "stations": ["fridge", "prep", "stove", "grill", "plating"],
+      "stations": ["fridge", "prep", "stove", "plating"],
       "ingredients": [
         { "name": "Pasta", "station": "fridge" },
-        { "name": "Bacon", "station": "fridge" }
+        { "name": "Bacon", "station": "fridge" },
+        { "name": "Eggs", "station": "fridge" },
+        { "name": "Cheese", "station": "fridge" },
+        { "name": "Chop Bacon", "station": "prep" },
+        { "name": "Grate Cheese", "station": "prep" },
+        { "name": "Boil Pasta", "station": "stove" },
+        { "name": "Fry Bacon", "station": "stove" },
+        { "name": "Mix & Plate", "station": "plating" }
       ],
       "estimatedTime": 260
     },
@@ -44,9 +63,48 @@
       "difficulty": 1,
       "stations": ["fridge", "dessert", "plating"],
       "ingredients": [
-        { "name": "Cake Base", "station": "fridge" }
+        { "name": "Cake Base", "station": "fridge" },
+        { "name": "Eggs", "station": "fridge" },
+        { "name": "Decorate Cake", "station": "dessert" },
+        { "name": "Final Plating", "station": "plating" }
       ],
       "estimatedTime": 120
+    },
+    {
+      "id": "recipe-005",
+      "name": "Grilled Chicken Salad",
+      "description": "Fresh salad with grilled chicken breast",
+      "difficulty": 2,
+      "stations": ["fridge", "prep", "grill", "plating"],
+      "ingredients": [
+        { "name": "Chicken", "station": "fridge" },
+        { "name": "Lettuce", "station": "fridge" },
+        { "name": "Tomato", "station": "fridge" },
+        { "name": "Cheese", "station": "fridge" },
+        { "name": "Season Chicken", "station": "prep" },
+        { "name": "Chop Vegetables", "station": "prep" },
+        { "name": "Grill Chicken", "station": "grill" },
+        { "name": "Assemble Salad", "station": "plating" }
+      ],
+      "estimatedTime": 200
+    },
+    {
+      "id": "recipe-006",
+      "name": "Breakfast Special",
+      "description": "Eggs, bacon and toast",
+      "difficulty": 2,
+      "stations": ["fridge", "prep", "stove", "oven", "plating"],
+      "ingredients": [
+        { "name": "Eggs", "station": "fridge" },
+        { "name": "Bacon", "station": "fridge" },
+        { "name": "Bread", "station": "fridge" },
+        { "name": "Slice Bacon", "station": "prep" },
+        { "name": "Fry Eggs", "station": "stove" },
+        { "name": "Cook Bacon", "station": "stove" },
+        { "name": "Toast Bread", "station": "oven" },
+        { "name": "Plate Breakfast", "station": "plating" }
+      ],
+      "estimatedTime": 180
     }
   ]
 }

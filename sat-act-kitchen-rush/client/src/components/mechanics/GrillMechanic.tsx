@@ -1,12 +1,15 @@
-import { useState, useEffect } from 'react';
-import { useGameStore } from '@store/gameStore';
+import { useState, useEffect, useMemo } from 'react';
+import { useGameStore, getActiveOrder } from '@store/gameStore';
 
 interface GrillMechanicProps {
   onComplete: (success: boolean) => void;
 }
 
+// Items that can be grilled (raw proteins or sliced items that need grilling)
+const GRILLABLE_ITEMS = ['beef', 'chicken', 'fish', 'bacon', 'sliced-beef', 'sliced-chicken'];
+
 export function GrillMechanic({ onComplete }: GrillMechanicProps) {
-  const { setActiveMechanic, addToInventory, removeFromInventory, inventory } = useGameStore();
+  const { setActiveMechanic, addToInventory, removeFromInventory, inventory, advanceOrderStep } = useGameStore();
   const [timeLeft, setTimeLeft] = useState(25);
   const [sear, setSear] = useState(0);
   const [smoke, setSmoke] = useState(0);
@@ -14,10 +17,16 @@ export function GrillMechanic({ onComplete }: GrillMechanicProps) {
   const [pressing, setPressing] = useState(false);
   const [onGrill, setOnGrill] = useState<string | null>(null);
 
+  // Find grillable items in inventory (not already cooked)
+  const grillableItems = useMemo(() =>
+    inventory.filter(item => !item.startsWith('cooked-') && GRILLABLE_ITEMS.some(g => item === g || item.endsWith(g))),
+  [inventory]);
+
   useEffect(() => {
-    const grillable = inventory.find(i => i === 'beef' || i === 'chicken' || i === 'fish' || i === 'bacon');
-    if (grillable) setOnGrill(grillable);
-  }, [inventory]);
+    if (grillableItems.length > 0 && !onGrill) {
+      setOnGrill(grillableItems[0]);
+    }
+  }, [grillableItems, onGrill]);
 
   useEffect(() => {
     if (gameOver || !onGrill) return;
@@ -34,8 +43,29 @@ export function GrillMechanic({ onComplete }: GrillMechanicProps) {
     if (gameOver) return;
     setGameOver(true);
     const success = sear >= 70 && sear < 100 && smoke < 80;
-    if (success && onGrill) { removeFromInventory(onGrill); addToInventory(`cooked-${onGrill}`); }
+    if (success && onGrill) {
+      removeFromInventory(onGrill);
+      // Transform item: sliced-beef -> cooked-beef, beef -> cooked-beef
+      const cookedItem = onGrill.startsWith('sliced-')
+        ? `cooked-${onGrill.replace('sliced-', '')}`
+        : `cooked-${onGrill}`;
+      addToInventory(cookedItem);
+
+      // Advance order step
+      const activeOrder = getActiveOrder();
+      if (activeOrder) {
+        advanceOrderStep(activeOrder.id, 'grill');
+      }
+    }
     onComplete(success);
+  };
+
+  const getEmoji = (item: string) => {
+    if (item.includes('beef')) return '🥩';
+    if (item.includes('chicken')) return '🍗';
+    if (item.includes('fish')) return '🐟';
+    if (item.includes('bacon')) return '🥓';
+    return '🍖';
   };
 
   return (
@@ -47,10 +77,16 @@ export function GrillMechanic({ onComplete }: GrillMechanicProps) {
           <div className="bg-red-950 px-3 py-1 rounded-full font-mono">{Math.ceil(timeLeft)}s</div>
         </div>
         <div className="p-6 space-y-6">
-          {!onGrill ? <div className="text-center py-12 text-red-900 font-bold opacity-50 uppercase italic">No protein on grill</div> : (
+          {!onGrill ? (
+            <div className="text-center py-12">
+              <div className="text-red-900 font-bold opacity-50 uppercase italic mb-4">No protein to grill</div>
+              <p className="text-sm text-red-700">Get ingredients from the fridge first!</p>
+              <button onClick={() => setActiveMechanic(null)} className="mt-4 px-6 py-2 bg-red-600 text-white rounded-lg">Leave Station</button>
+            </div>
+          ) : (
             <>
               <div className="relative h-48 bg-gray-900 rounded border-b-8 border-gray-800 flex items-center justify-center">
-                <div className={`text-7xl transition-all ${pressing ? 'scale-y-75 translate-y-2' : ''}`}>🥩</div>
+                <div className={`text-7xl transition-all ${pressing ? 'scale-y-75 translate-y-2' : ''}`}>{getEmoji(onGrill)}</div>
                 <div className="absolute inset-0 bg-gray-400 pointer-events-none transition-opacity" style={{ opacity: smoke / 150 }} />
               </div>
               <div className="h-4 bg-gray-200 rounded-full overflow-hidden border">

@@ -1,54 +1,62 @@
 import { useState } from 'react';
 import { useGameStore } from '@store/gameStore';
 
-export function QuestionModal() {
-  const { activeQuestion, setActiveQuestion, updateScore } = useGameStore();
+interface QuestionModalProps {
+  onAnswered?: (correct: boolean) => void;
+}
+
+export function QuestionModal({ onAnswered }: QuestionModalProps) {
+  const { activeQuestion, setActiveQuestion, updateScore, activeStation } = useGameStore();
   const [selectedChoice, setSelectedChoice] = useState<string | null>(null);
   const [showFeedback, setShowFeedback] = useState(false);
 
-  console.log('🎨 QuestionModal render:', {
-    hasQuestion: !!activeQuestion,
-    questionId: activeQuestion?.id,
-    showFeedback,
-  });
-
   if (!activeQuestion) {
-    console.log('⏸️ No active question, modal hidden');
     return null;
   }
 
+  const isCorrect = selectedChoice === activeQuestion.correctChoiceId;
+
   const handleSubmit = () => {
-    console.log('Submit clicked, selected:', selectedChoice);
     setShowFeedback(true);
     if (selectedChoice === activeQuestion.correctChoiceId) {
       updateScore(100);
-      // Advance the active order step
-      const orders = useGameStore.getState().orders;
-      const activeOrder = orders.find(o => o.status === 'in_progress');
-      if (activeOrder) {
-        useGameStore.getState().advanceOrderStep(activeOrder.id);
-      }
     }
   };
 
   const handleContinue = () => {
-    console.log('➡️ Continue clicked, closing modal');
+    // Close the modal first
     setActiveQuestion(null);
     setShowFeedback(false);
     setSelectedChoice(null);
+
+    // Notify parent that question was answered
+    // If correct, this triggers the mechanic
+    if (onAnswered) {
+      onAnswered(isCorrect);
+    }
   };
 
-  const isCorrect = selectedChoice === activeQuestion.correctChoiceId;
+  // Don't allow closing without answering (except X button closes without triggering mechanic)
+  const handleClose = () => {
+    setActiveQuestion(null);
+    setShowFeedback(false);
+    setSelectedChoice(null);
+    // Don't trigger mechanic if closed without answering
+  };
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
       <div className="bg-white rounded-xl shadow-2xl max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto relative">
-        <button
-          onClick={() => setActiveQuestion(null)}
-          className="absolute top-4 right-4 w-10 h-10 flex items-center justify-center rounded-full bg-gray-100 text-gray-500 hover:bg-red-500 hover:text-white transition-colors z-10"
-        >
-          ✕
-        </button>
+        {/* Close button - only if not showing feedback */}
+        {!showFeedback && (
+          <button
+            onClick={handleClose}
+            className="absolute top-4 right-4 w-10 h-10 flex items-center justify-center rounded-full bg-gray-100 text-gray-500 hover:bg-red-500 hover:text-white transition-colors z-10"
+          >
+            ✕
+          </button>
+        )}
+
         <div className="p-6">
           {!showFeedback ? (
             <>
@@ -57,6 +65,9 @@ export function QuestionModal() {
                 <span className="inline-block px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm font-semibold mb-2">
                   {activeQuestion.stationType.toUpperCase()} STATION
                 </span>
+                <p className="text-xs text-gray-500 mb-2">
+                  Answer correctly to access the station
+                </p>
                 <h2 className="text-2xl font-bold text-gray-900 mt-2">
                   {activeQuestion.stem}
                 </h2>
@@ -74,10 +85,7 @@ export function QuestionModal() {
                 {activeQuestion.choices.map(choice => (
                   <button
                     key={choice.id}
-                    onClick={() => {
-                      console.log('Choice selected:', choice.id);
-                      setSelectedChoice(choice.id);
-                    }}
+                    onClick={() => setSelectedChoice(choice.id)}
                     className={`
                       w-full text-left p-4 rounded-lg border-2 transition-all
                       ${selectedChoice === choice.id
@@ -127,17 +135,32 @@ export function QuestionModal() {
               </div>
 
               {isCorrect && (
-                <div className="mb-6 text-center text-green-600 font-bold text-xl">
-                  +100 points
+                <div className="mb-4 p-4 bg-blue-50 border-2 border-blue-200 rounded-lg text-center">
+                  <p className="text-blue-700 font-bold text-lg">+100 points</p>
+                  <p className="text-blue-600 text-sm mt-1">
+                    You can now use the {activeStation?.toUpperCase()} station!
+                  </p>
+                </div>
+              )}
+
+              {!isCorrect && (
+                <div className="mb-4 p-4 bg-amber-50 border-2 border-amber-200 rounded-lg text-center">
+                  <p className="text-amber-700 text-sm">
+                    You can still try the station, but study the explanation!
+                  </p>
                 </div>
               )}
 
               {/* Continue Button */}
               <button
                 onClick={handleContinue}
-                className="w-full py-4 px-6 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-semibold text-lg transition-all"
+                className={`w-full py-4 px-6 rounded-lg font-semibold text-lg transition-all ${
+                  isCorrect
+                    ? 'bg-green-600 hover:bg-green-700 text-white'
+                    : 'bg-blue-600 hover:bg-blue-700 text-white'
+                }`}
               >
-                Continue
+                {isCorrect ? 'Continue to Station' : 'Continue Anyway'}
               </button>
             </>
           )}

@@ -65,10 +65,15 @@ export class GameEngine {
   }
 
   public async init() {
+    console.log('[GameEngine] Starting initialization...');
     await this.loadAssets();
+    console.log('[GameEngine] Assets loaded, setting up kitchen...');
     this.setupKitchen();
+    console.log('[GameEngine] Kitchen setup complete, setting up player...');
     this.setupPlayer();
+    console.log('[GameEngine] Player setup complete, setting up input...');
     this.setupInput();
+    console.log('[GameEngine] Initialization complete. Stage children:', this.app.stage.children.length);
   }
 
   private async loadAssets() {
@@ -299,11 +304,18 @@ export class GameEngine {
     if (station.type === 'serving') { this.completeOrder(); return; }
 
     gameState.setActiveStation(station.type);
+
+    // NEW FLOW: Question FIRST, then mechanic after correct answer
+    // Show the question first for all process stations
+    await this.showQuestionForStation(station.type);
+  }
+
+  // Called from QuestionModal after correct answer to trigger the mechanic
+  public triggerMechanicForStation(stationType: string) {
+    const gameState = useGameStore.getState();
     const processStations = ['fridge', 'prep', 'stove', 'grill', 'fry', 'oven', 'dessert', 'drinks', 'plating'];
-    if (processStations.includes(station.type)) {
-      gameState.setActiveMechanic(station.type as any);
-    } else {
-      await this.showQuestionForStation(station.type);
+    if (processStations.includes(stationType)) {
+      gameState.setActiveMechanic(stationType as any);
     }
   }
 
@@ -321,10 +333,26 @@ export class GameEngine {
 
   private showOrderPickup() {
     const gameState = useGameStore.getState();
-    if (gameState.activeRecipe) return;
+
+    // Guard: Don't create order if already showing recipe modal
+    if (gameState.activeRecipe) {
+      console.log('[GameEngine] Recipe already active, skipping order pickup');
+      return;
+    }
+
+    // Guard: Don't create order if there's already an in-progress order
+    const existingOrder = gameState.orders.find(o => o.status === 'in_progress');
+    if (existingOrder) {
+      console.log('[GameEngine] Order already in progress, skipping');
+      return;
+    }
+
     const recipes = recipesData.recipes as Recipe[];
     const randomRecipe = recipes[Math.floor(Math.random() * recipes.length)];
+
+    // Set recipe first to prevent race conditions
     gameState.setActiveRecipe(randomRecipe);
+
     const newOrder = this.generateOrderFromRecipe(randomRecipe);
     gameState.addOrder(newOrder);
     gameState.startOrder(newOrder.id);

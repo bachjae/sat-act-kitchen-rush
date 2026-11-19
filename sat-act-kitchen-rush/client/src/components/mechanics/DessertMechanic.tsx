@@ -1,12 +1,12 @@
 import { useState, useEffect } from 'react';
-import { useGameStore } from '@store/gameStore';
+import { useGameStore, getActiveOrder } from '@store/gameStore';
 
 interface DessertMechanicProps {
   onComplete: (success: boolean) => void;
 }
 
 export function DessertMechanic({ onComplete }: DessertMechanicProps) {
-  const { setActiveMechanic, addToInventory, removeFromInventory } = useGameStore();
+  const { setActiveMechanic, addToInventory, removeFromInventory, advanceOrderStep, inventory } = useGameStore();
   const [layers, setLayers] = useState<string[]>([]);
   const [targetLayers] = useState(['cake', 'cream', 'berry']);
   const [gameOver, setGameOver] = useState(false);
@@ -30,7 +30,21 @@ export function DessertMechanic({ onComplete }: DessertMechanicProps) {
     if (newLayers.length === targetLayers.length) {
       const success = newLayers.every((l, i) => l === targetLayers[i]);
       setGameOver(true);
-      if (success) { removeFromInventory('cake'); addToInventory('finished-dessert'); }
+      if (success) {
+        // Remove cake-base if present, otherwise remove cake
+        if (inventory.includes('cake-base')) {
+          removeFromInventory('cake-base');
+        } else if (inventory.includes('cake')) {
+          removeFromInventory('cake');
+        }
+        addToInventory('finished-dessert');
+
+        // Advance order step
+        const activeOrder = getActiveOrder();
+        if (activeOrder) {
+          advanceOrderStep(activeOrder.id, 'dessert');
+        }
+      }
       onComplete(success);
     }
   };

@@ -1,12 +1,15 @@
-import { useState, useEffect } from 'react';
-import { useGameStore } from '@store/gameStore';
+import { useState, useEffect, useMemo } from 'react';
+import { useGameStore, getActiveOrder } from '@store/gameStore';
 
 interface FryMechanicProps {
   onComplete: (success: boolean) => void;
 }
 
+// Items that can be fried
+const FRYABLE_ITEMS = ['potato', 'chicken', 'fish', 'sliced-potato'];
+
 export function FryMechanic({ onComplete }: FryMechanicProps) {
-  const { setActiveMechanic, addToInventory, removeFromInventory, inventory } = useGameStore();
+  const { setActiveMechanic, addToInventory, removeFromInventory, inventory, advanceOrderStep } = useGameStore();
   const [timeLeft, setTimeLeft] = useState(20);
   const [basketLowered, setBasketLowered] = useState(false);
   const [fryProgress, setFryProgress] = useState(0);
@@ -14,10 +17,16 @@ export function FryMechanic({ onComplete }: FryMechanicProps) {
   const [gameOver, setGameOver] = useState(false);
   const [onFryer, setOnFryer] = useState<string | null>(null);
 
+  // Find fryable items in inventory
+  const fryableItems = useMemo(() =>
+    inventory.filter(item => !item.startsWith('fries') && !item.startsWith('fried-') && FRYABLE_ITEMS.some(f => item === f || item.includes(f))),
+  [inventory]);
+
   useEffect(() => {
-    const fryable = inventory.find(i => i === 'potato' || i === 'chicken' || i === 'fish');
-    if (fryable) setOnFryer(fryable);
-  }, [inventory]);
+    if (fryableItems.length > 0 && !onFryer) {
+      setOnFryer(fryableItems[0]);
+    }
+  }, [fryableItems, onFryer]);
 
   useEffect(() => {
     if (gameOver || !onFryer) return;
@@ -38,8 +47,26 @@ export function FryMechanic({ onComplete }: FryMechanicProps) {
     if (gameOver) return;
     setGameOver(true);
     const success = fryProgress >= 80 && fryProgress <= 110;
-    if (success && onFryer) { removeFromInventory(onFryer); addToInventory(onFryer === 'potato' ? 'fries' : `cooked-${onFryer}`); }
+    if (success && onFryer) {
+      removeFromInventory(onFryer);
+      // Transform: potato/sliced-potato -> fries, others -> fried-X
+      const output = onFryer.includes('potato') ? 'fries' : `fried-${onFryer.replace('sliced-', '')}`;
+      addToInventory(output);
+
+      // Advance order step
+      const activeOrder = getActiveOrder();
+      if (activeOrder) {
+        advanceOrderStep(activeOrder.id, 'fry');
+      }
+    }
     onComplete(success);
+  };
+
+  const getEmoji = (item: string) => {
+    if (item.includes('potato')) return '🥔';
+    if (item.includes('chicken')) return '🍗';
+    if (item.includes('fish')) return '🐟';
+    return '🍟';
   };
 
   return (
@@ -51,12 +78,18 @@ export function FryMechanic({ onComplete }: FryMechanicProps) {
           <div className="bg-yellow-700 px-3 py-1 rounded-full font-mono">{Math.ceil(timeLeft)}s</div>
         </div>
         <div className="p-6 space-y-6">
-          {!onFryer ? <div className="text-center py-12 text-yellow-800 font-bold italic opacity-50">Need potato or protein</div> : (
+          {!onFryer ? (
+            <div className="text-center py-12">
+              <div className="text-yellow-800 font-bold italic opacity-50 mb-4">No item to fry</div>
+              <p className="text-sm text-yellow-700">Get potato, chicken, or fish first!</p>
+              <button onClick={() => setActiveMechanic(null)} className="mt-4 px-6 py-2 bg-yellow-600 text-white rounded-lg">Leave Station</button>
+            </div>
+          ) : (
             <>
               <div className="relative h-48 bg-gray-700 rounded-lg border-4 border-gray-600 flex flex-col items-center justify-center overflow-hidden">
                 <div className={`absolute inset-0 bg-yellow-500 opacity-30 ${basketLowered ? 'animate-pulse' : ''}`} />
                 <div className={`relative transition-transform duration-500 ${basketLowered ? 'translate-y-8' : '-translate-y-12'}`}>
-                  <div className="w-24 h-16 border-4 border-gray-400 rounded-b-lg flex items-center justify-center bg-gray-800 bg-opacity-40">🍟</div>
+                  <div className="w-24 h-16 border-4 border-gray-400 rounded-b-lg flex items-center justify-center bg-gray-800 bg-opacity-40 text-4xl">{getEmoji(onFryer)}</div>
                 </div>
               </div>
               <div className="h-4 bg-gray-200 rounded-full overflow-hidden border">

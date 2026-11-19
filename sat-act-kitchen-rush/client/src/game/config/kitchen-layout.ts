@@ -1,4 +1,4 @@
-import type { KitchenLayout, GridConfig, StationType, Position } from '@app-types/game.types';
+import type { KitchenLayout, GridConfig, Position } from '@app-types/game.types';
 
 export const GRID: GridConfig = {
   TILE_SIZE: 32,
